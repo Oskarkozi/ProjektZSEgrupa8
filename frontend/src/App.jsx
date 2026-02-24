@@ -1,17 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Header from './components/Header';
+import BalanceCard from './components/Balance';
+import TransactionList from './components/TransactionList';
+import BottomNav from './components/Navbar';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-800 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-emerald-600 shadow-lg p-6 bg-white rounded-2xl">
-        Tailwind works
-        
-      </h1>
-    </div>
-  )
-}
-export default App
+    <div className="min-h-screen bg-gray-900 text-gray-100 font-sans pb-24">
+      <Header userName="Użytkowniku" />
+      
+      <main className="px-4 space-y-6">
+        <BalanceCard total={1000} income={100} expenses={50} />
+        <TransactionList />
+      </main>
 
+      <BottomNav />
+    </div>
+  );
+}
+
+export default App;
