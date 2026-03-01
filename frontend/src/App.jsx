@@ -2,6 +2,7 @@ import Header from './components/Header';
 import BalanceCard from './components/Balance';
 import TransactionList from './components/TransactionList';
 import BottomNav from './components/Navbar';
+import { auth, db } from './services/firebase';
 
 function App() {
   return (
