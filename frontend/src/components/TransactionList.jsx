@@ -1,3 +1,6 @@
+import { useState } from "react";
+import Form from "./Add_transaction_form.jsx";
+
 function TransactionItem({ name, amount, type }) {
   return (
     <div className="flex justify-between items-center p-3 bg-gray-800/50 rounded-xl">
@@ -10,12 +13,22 @@ function TransactionItem({ name, amount, type }) {
 }
 
 export default function TransactionList() {
+  const [isFormVisible, setIsFormVisible] = useState(false);
   return (
     <div className="pb-8">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-semibold text-lg text-gray-200">Ostatnie transakcje</h3>
-        <button className=" text-emerald-400 hover:underline">+ Dodaj nową transakcję</button>
+        <button onClick={() => setIsFormVisible(true)} className=" text-emerald-400 hover:underline">+ Dodaj nową transakcję</button>
       </div>
+      {isFormVisible && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-900 border border-gray-700 p-6 rounded-2x1 shadow 2x1 w-full max-w-md relative">
+            <button onClick={() => setIsFormVisible(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
+            <Form />
+            </div>
+          </div>
+      )}
+
       <div className="space-y-3">
         {/* Przykład użycia - docelowo tutaj będzie .map() z danych z API */}
         <TransactionItem name="Zakupy spożywcze" amount={50} type="expense" />

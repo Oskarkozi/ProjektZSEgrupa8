@@ -6,12 +6,7 @@ export default function Header({ userName = "Użytkowniku" }) {
         <h1 className="text-xl font-bold text-white">{userName}</h1>
       </div>
       
-      <button 
-        className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition"
-        aria-label="Profile"
-      >
-        <span className="text-lg">U</span>
-      </button>
+      
     </header>
   );
 }

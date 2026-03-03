@@ -5,6 +5,12 @@ return (
           <button className="flex flex-col items-center gap-1 text-emerald-400">
             <span className="text-[10px] font-medium">Home</span>
           </button>
+          <button 
+        className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition"
+        aria-label="Profile"
+      >
+        <span className="text-lg">U</span>
+      </button>
         </div>
       </nav>
   );
