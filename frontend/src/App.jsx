@@ -3,6 +3,8 @@ import BalanceCard from './components/Balance';
 import TransactionList from './components/TransactionList';
 import BottomNav from './components/Navbar';
 import { auth, db } from './services/firebase';
+import { getDatabase } from "firebase/database";
+
 
 function App() {
   return (

@@ -1,5 +1,21 @@
 import { useState } from "react";
 import Form from "./Add_transaction_form.jsx";
+import { getDatabase, ref, set, push } from "firebase/database";
+import { auth } from "../services/firebase";
+
+
+
+function writeUserData(userId, category, amount, type) {
+  const db = getDatabase();
+  
+  const newExpenseRef = push(ref(db, 'users/' + userId + '/expenses')); 
+  set(newExpenseRef, { 
+    category: category,
+    amount: amount,
+    type: type,
+    
+  });
+}
 
 function TransactionItem({ name, amount, type }) {
   return (
@@ -14,6 +30,14 @@ function TransactionItem({ name, amount, type }) {
 
 export default function TransactionList() {
   const [isFormVisible, setIsFormVisible] = useState(false);
+  
+  
+  const currentUserId = auth.currentUser?.uid || 'user-id-placeholder';
+  
+  const handleTransactionAdded = () => {
+    setIsFormVisible(false);
+  };
+  
   return (
     <div className="pb-8">
       <div className="flex justify-between items-center mb-4">
@@ -24,7 +48,11 @@ export default function TransactionList() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-gray-900 border border-gray-700 p-6 rounded-2x1 shadow 2x1 w-full max-w-md relative">
             <button onClick={() => setIsFormVisible(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white">✕</button>
-            <Form />
+            <Form 
+              userId={currentUserId}
+              onSaveTransaction={writeUserData}
+              onCloseForm={handleTransactionAdded}
+            />
             </div>
           </div>
       )}
