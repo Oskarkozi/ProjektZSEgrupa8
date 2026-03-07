@@ -21,6 +21,7 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       console.log('Stan użytkownika:', currentUser ? 'Zalogowany' : 'Wylogowany');
       setUser(currentUser);
+      setLoading(false);
     });
 
 
