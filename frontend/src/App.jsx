@@ -4,8 +4,9 @@ import BalanceCard from './components/Balance';
 import TransactionList from './components/TransactionList';
 import BottomNav from './components/Navbar';
 import Login from './Login';
-import { auth, db } from './services/firebase';
+import { auth, db, realtimeDB } from './services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { ref, get } from "firebase/database";
 
 
 function App() {
@@ -18,9 +19,26 @@ function App() {
 
   useEffect(() => {
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       console.log('Stan użytkownika:', currentUser ? 'Zalogowany' : 'Wylogowany');
-      setUser(currentUser);
+
+      if (currentUser) {
+      try {
+        const userRef = ref(realtimeDB, "users/" + currentUser.uid);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          setUser({ ...currentUser, ...snapshot.val() });
+          console.log("Zaktualizowany user:", { ...currentUser, ...snapshot.val() });
+        } else {
+          setUser(currentUser); // fallback jeśli brak danych w bazie
+        }
+      } catch (err) {
+        console.error("Błąd pobierania danych użytkownika:", err);
+        setUser(currentUser); 
+      }
+    } else {
+      setUser(null);
+    }
       setLoading(false);
     });
 
@@ -56,7 +74,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 font-sans pb-24">
 
-      <Header userName={user.email || "Użytkowniku"} />
+      <Header userName={user?.userName || user?.displayName || "Użytkownikowi"} />
 
       <main className="px-4 space-y-6">
         <BalanceCard total={1000} income={100} expenses={50} />
