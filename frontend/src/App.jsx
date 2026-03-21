@@ -6,13 +6,13 @@ import BottomNav from './components/Navbar';
 import Login from './Login';
 import { auth, db, realtimeDB } from './services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { ref, get } from "firebase/database";
+import { ref, get, onValue } from "firebase/database";
 
 
 function App() {
 
   const [user, setUser] = useState(null);
-
+  const [totals, setTotals] = useState({ balance: 0, income: 0, expenses: 0 }); // Stan dla bilansu
 
   const [loading, setLoading] = useState(true);
 
@@ -46,6 +46,41 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  // Nasłuchiwanie zmian w transakcjach dla aktualnego użytkownika
+  useEffect(() => {
+    if (user?.uid) {
+      const expensesRef = ref(realtimeDB, 'users/' + user.uid + '/expenses');
+      
+      const unsubscribe = onValue(expensesRef, (snapshot) => {
+        const data = snapshot.val();
+        let currentIncome = 0;
+        let currentExpenses = 0;
+
+        if (data) {
+          Object.values(data).forEach(transaction => {
+            const amount = parseFloat(transaction.amount);
+            if (!isNaN(amount)) {
+              if (transaction.type === 'income') {
+                currentIncome += amount;
+              } else {
+                currentExpenses += amount;
+              }
+            }
+          });
+        }
+        
+        setTotals({
+          balance: currentIncome - currentExpenses,
+          income: currentIncome,
+          expenses: currentExpenses
+        });
+      });
+
+      return () => unsubscribe();
+    } else {
+      setTotals({ balance: 0, income: 0, expenses: 0 });
+    }
+  }, [user]); 
 
   const handleLogout = async () => {
     try {
@@ -77,7 +112,11 @@ function App() {
       <Header userName={user?.userName || user?.displayName || "Użytkownikowi"} />
 
       <main className="px-4 space-y-6">
-        <BalanceCard total={1000} income={100} expenses={50} />
+        <BalanceCard 
+          total={totals.balance.toFixed(2)} 
+          income={totals.income.toFixed(2)} 
+          expenses={totals.expenses.toFixed(2)} 
+        />
         <TransactionList />
 
 

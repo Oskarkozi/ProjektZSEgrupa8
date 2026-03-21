@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { categories } from '../utils/categories';
+import { set } from 'firebase/database';
 
 export default function TransactionForm({ userId, onSaveTransaction, onCloseForm, initialData = null }){
     const [selectedType, setSelectedType] = useState(initialData?.type || 'income');
@@ -7,8 +9,12 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
     const [date, setDate] = useState(initialData?.date || new Date().toISOString().split('T')[0]);
     const [description, setDescription] = useState(initialData?.description || '');
 
+    // Dostępne kategorie w zależności od wybranego typu (income/expense)
+    const availableCategories = categories[selectedType] || {};
+
   const handleTypeChange = (event) => {
     setSelectedType(event.target.value);
+    setCategory(''); // Czyścimy kategorię przy zmianie typu
   };
 
   const handleSubmit = (event) => {
@@ -41,15 +47,19 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="category" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Kategoria</label>
-                    <input
-                      type="text"
-                      id="category"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-                      placeholder="Np. Zakupy"
+                    <select id="category"
+                     value={category}
+                     onChange={(e) => setCategory(e.target.value)}
+                     className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                       required
-                    />
+                    >
+                      <option value="" disabled hidden>Wybierz kategorię</option>
+                      {Object.values(availableCategories).map((cat)=>(
+                        <option key={cat.id} value={cat.id}>
+                          {cat.label}
+                        </option>
+                      ))}
+                      </select>
                   </div>
                   <div>
                     <label htmlFor="amount" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Kwota</label>
@@ -111,7 +121,7 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
                         id="description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors min-h-[80px]"
+                        className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors min-h-20"
                         placeholder="Dodatkowe informacje..."
                     />
                 </div>
