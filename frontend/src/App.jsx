@@ -12,7 +12,8 @@ import { ref, get, onValue } from "firebase/database";
 function App() {
 
   const [user, setUser] = useState(null);
-  const [totals, setTotals] = useState({ balance: 0, income: 0, expenses: 0 }); // Stan dla bilansu
+  const [totals, setTotals] = useState({ balance: 0, income: 0, expenses: 0 }); 
+  const [activeTab, setActiveTab] = useState('home'); // Stan nawigacji
 
   const [loading, setLoading] = useState(true);
 
@@ -112,25 +113,49 @@ function App() {
       <Header userName={user?.userName || user?.displayName || "Użytkownikowi"} />
 
       <main className="px-4 space-y-6">
-        <BalanceCard 
-          total={totals.balance.toFixed(2)} 
-          income={totals.income.toFixed(2)} 
-          expenses={totals.expenses.toFixed(2)} 
-        />
-        <TransactionList />
+        
+        {activeTab === 'home' && (
+          <>
+            <BalanceCard 
+              total={totals.balance.toFixed(2)} 
+              income={totals.income.toFixed(2)} 
+              expenses={totals.expenses.toFixed(2)} 
+            />
+            <TransactionList />
+          </>
+        )}
+
+        {/* Placeholder na przyszłe widoki */}
+        {activeTab === 'analysis' && (
+          <div className="text-center py-20 text-gray-500">
+            <h2 className="text-xl font-bold mb-2">Analiza</h2>
+            <p>Tutaj pojawią się wykresy wydatków.</p>
+          </div>
+        )}
+
+        {activeTab === 'history' && (
+          <div className="text-center py-20 text-gray-500">
+             <h2 className="text-xl font-bold mb-2">Pełna Historia</h2>
+             <p>Lista wszystkich transakcji.</p>
+          </div>
+        )}
+
+        {activeTab === 'profile' && (
+          <div className="text-center py-20 text-gray-500">
+             <h2 className="text-xl font-bold mb-2">Profil Użytkownika</h2>
+             <button
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-colors mt-4"
+            >
+              Wyloguj się
+            </button>
+          </div>
+        )}
 
 
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-colors"
-          >
-            Wyloguj się
-          </button>
-        </div>
       </main>
 
-      <BottomNav />
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }
