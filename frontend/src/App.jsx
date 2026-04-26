@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import BalanceCard from './components/Balance';
 import TransactionList from './components/TransactionList';
+import TransactionHistory from './components/TransactionHistory';
 import BottomNav from './components/Navbar';
 import Login from './Login';
 import { auth, db, realtimeDB } from './services/firebase';
@@ -121,7 +122,7 @@ function App() {
               income={totals.income.toFixed(2)} 
               expenses={totals.expenses.toFixed(2)} 
             />
-            <TransactionList />
+            <TransactionList onShowHistory={() => setActiveTab('history')} />
           </>
         )}
 
@@ -137,6 +138,7 @@ function App() {
           <div className="text-center py-20 text-gray-500">
              <h2 className="text-xl font-bold mb-2">Pełna Historia</h2>
              <p>Lista wszystkich transakcji.</p>
+             <TransactionHistory />
           </div>
         )}
 

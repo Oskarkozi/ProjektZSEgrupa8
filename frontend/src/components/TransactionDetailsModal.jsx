@@ -1,5 +1,5 @@
 // Modal wyświetlający szczegóły transakcji
-export default function TransactionDetailsModal({ transaction, onClose, onEdit, onDelete }) {
+export default function TransactionDetailsModal({ transaction, onClose, onEdit, onDelete,onRepeat }) {
     if (!transaction) return null;
   
     return (
@@ -47,6 +47,12 @@ export default function TransactionDetailsModal({ transaction, onClose, onEdit, 
                   Usuń
                </button>
           </div>
+          <button
+              className="text-emerald-400 hover:text-emerald-300 transition-colors text-sm float-left mt-4"
+              onClick={() => onRepeat({ ...transaction, date: new Date().toISOString().split('T')[0] })}
+            >
+              Powtórz transakcję
+            </button>
         </div>
       </div>
     );

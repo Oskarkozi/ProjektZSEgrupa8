@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ref, onValue, set } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 import { auth, database } from "../services/firebase";
 import { writeUserData, updateUserData, removeUserData } from "../services/transactionService";
 
@@ -13,15 +13,15 @@ import TransactionDetailsModal from "./TransactionDetailsModal.jsx";
 // Components moved to their own files
 
 
-export default function TransactionList({onShowHistory}) {
+export default function TransactionHistory() {
   const [isFormVisible, setIsFormVisible] = useState(false); // Do widoczności formularza
   const [selectedTransaction, setSelectedTransaction] = useState(null); // Do podglądu szczegółów
   const [editingTransaction, setEditingTransaction] = useState(null); // Do edycji
   const [repeatTransaction, setRepeatTransaction] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  
+
   const currentUserId = auth.currentUser?.uid;
-  
+
   useEffect(() => {
     if (!currentUserId) return;
 
@@ -29,13 +29,13 @@ export default function TransactionList({onShowHistory}) {
 
     const unsubscribe = onValue(expensesRef, (snapshot) => {
       const data = snapshot.val();
-      
+
       if (data) {
         const loadedTransactions = Object.entries(data).map(([id, val]) => ({
           id,
           ...val
         }));
-        
+
         setTransactions(loadedTransactions.reverse());
       } else {
         setTransactions([]);
@@ -44,7 +44,7 @@ export default function TransactionList({onShowHistory}) {
 
     return () => unsubscribe();
   }, [currentUserId]);
-  
+
   const handleTransactionAdded = () => {
     setIsFormVisible(false);
     setEditingTransaction(null);
@@ -58,14 +58,15 @@ export default function TransactionList({onShowHistory}) {
       setIsFormVisible(false);
     }
   };
-  
+
   const handleEditClick = (transaction) => {
       setEditingTransaction(transaction); // Ustawiamy transakcję, którą edytujemy
+      setRepeatTransaction(null);
       setIsFormVisible(true); // Otwieramy format
       setSelectedTransaction(null); // Zamykamy podgląd
   };
 
-   const handleRepeatClick = (transaction) => {
+    const handleRepeatClick = (transaction) => {
       setEditingTransaction(null);
       setRepeatTransaction(transaction);
       setIsFormVisible(true);
@@ -78,21 +79,12 @@ export default function TransactionList({onShowHistory}) {
       setSelectedTransaction(null);
     }
   };
-  const visibleTransactions = transactions.slice(0, 6); 
+
   return (
     <div className="pb-8">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-lg text-gray-200">Ostatnie transakcje</h3>
-        <button 
-          onClick={() => {
-            setEditingTransaction(null);
-            setRepeatTransaction(null);
-            setIsFormVisible(true);
-          }} 
-          className="text-emerald-400 hover:text-emerald-300 transition-colors text-sm font-medium"
-        >
-          + Dodaj nową transakcję
-        </button>
+
+
       </div>
 
       {/* Modal Formularza (Dodawanie / Edycja) */}
@@ -102,9 +94,8 @@ export default function TransactionList({onShowHistory}) {
             <button 
               onClick={() => {
                 setIsFormVisible(false);
-                setRepeatTransaction(null);
                 setEditingTransaction(null);
-                
+                setRepeatTransaction(null);
               }} 
               className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
             >
@@ -114,6 +105,7 @@ export default function TransactionList({onShowHistory}) {
               userId={currentUserId}
               onSaveTransaction={editingTransaction ? handleTransactionUpdated : writeUserData}
               onCloseForm={handleTransactionAdded}
+              initialData={editingTransaction}
               initialData={editingTransaction || repeatTransaction}
               isEditing={!!editingTransaction}
             />
@@ -133,8 +125,8 @@ export default function TransactionList({onShowHistory}) {
       )}
 
       <div className="space-y-3">
-        {visibleTransactions.length > 0 ? (
-          visibleTransactions.map((transaction) => (
+        {transactions.length > 0 ? (
+          transactions.map((transaction) => (
             <TransactionItem 
               key={transaction.id}
               category={transaction.category} 
@@ -152,17 +144,7 @@ export default function TransactionList({onShowHistory}) {
         )}
       </div>
 
-      <div className="mt-4 text-right text-sm text-gray-400">
-        {transactions.length > 6 && (
-            <button
-              type="button"
-              onClick={onShowHistory}
-              className="text-emerald-400 text-sm hover:underline font-medium"
-            >
-              Zobacz całą historię
-            </button>
-        )}
-       </div> 
+
     </div>
   );
 }

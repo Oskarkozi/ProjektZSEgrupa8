@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { categories } from '../utils/categories';
 import { set } from 'firebase/database';
 
-export default function TransactionForm({ userId, onSaveTransaction, onCloseForm, initialData = null }){
+export default function TransactionForm({ userId, onSaveTransaction, onCloseForm, initialData = null, isEditing = false }){
     const [selectedType, setSelectedType] = useState(initialData?.type || 'income');
     const [category, setCategory] = useState(initialData?.category || '');
     const [amount, setAmount] = useState(initialData?.amount || '');
@@ -28,7 +28,7 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
 
     onSaveTransaction(userId, category.trim(), parsedAmount, selectedType, date, description.trim());
 
-    if (!initialData) {
+    if (!isEditing) {
       setCategory('');
       setAmount('');
       setDate(new Date().toISOString().split('T')[0]);
@@ -40,7 +40,7 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
 
     return(
         <div>
-            <h2 className="text-xl font-bold text-gray-100 mb-4">{initialData ? 'Edytuj transakcję' : 'Nowa transakcja'}</h2>
+            <h2 className="text-xl font-bold text-gray-100 mb-4">{isEditing ? 'Edytuj transakcję' : 'Nowa transakcja'}</h2>
             <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
             <form onSubmit={handleSubmit} className="space-y-4">
               
@@ -131,7 +131,7 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
                   type="submit"
                   className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg transition-all duration-200 shadow-lg shadow-emerald-900/20"
                  >
-                    {initialData ? 'Zapisz zmiany' : 'Dodaj transakcję'}
+                    {isEditing ? 'Zapisz zmiany' : 'Dodaj transakcję'}
                   </button>
               </div>
             </form>
