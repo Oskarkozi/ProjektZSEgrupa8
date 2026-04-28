@@ -153,7 +153,7 @@ export default function TransactionList({onShowHistory}) {
       </div>
 
       <div className="mt-4 text-right text-sm text-gray-400">
-        {transactions.length > 6 && (
+        {transactions.length > 5 && (
             <button
               type="button"
               onClick={onShowHistory}

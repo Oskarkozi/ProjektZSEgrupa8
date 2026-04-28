@@ -135,9 +135,8 @@ function App() {
         )}
 
         {activeTab === 'history' && (
-          <div className="text-center py-20 text-gray-500">
-             <h2 className="text-xl font-bold mb-2">Pełna Historia</h2>
-             <p>Lista wszystkich transakcji.</p>
+          <div className="w-full">
+             <h2 className="text-xl font-bold mb-6 text-center">Pełna Historia</h2>
              <TransactionHistory />
           </div>
         )}
