@@ -105,7 +105,6 @@ export default function TransactionHistory() {
               userId={currentUserId}
               onSaveTransaction={editingTransaction ? handleTransactionUpdated : writeUserData}
               onCloseForm={handleTransactionAdded}
-              initialData={editingTransaction}
               initialData={editingTransaction || repeatTransaction}
               isEditing={!!editingTransaction}
             />
