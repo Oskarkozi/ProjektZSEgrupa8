@@ -5,6 +5,7 @@ import TransactionList from './components/TransactionList';
 import TransactionHistory from './components/TransactionHistory';
 import BottomNav from './components/Navbar';
 import Login from './Login';
+import Sett from './components/SettingsPage';
 import { auth, db, realtimeDB } from './services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, get, onValue } from "firebase/database";
@@ -144,13 +145,7 @@ function App() {
 
         {activeTab === 'profile' && (
           <div className="text-center py-20 text-gray-500">
-             <h2 className="text-xl font-bold mb-2">Profil Użytkownika</h2>
-             <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-colors mt-4"
-            >
-              Wyloguj się
-            </button>
+             <Sett />
           </div>
         )}
 
