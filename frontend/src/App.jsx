@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import BalanceCard from './components/Balance';
+import AnalyticsPage from './components/AnalyticsPage';
 import TransactionList from './components/TransactionList';
 import TransactionHistory from './components/TransactionHistory';
 import BottomNav from './components/Navbar';
@@ -127,11 +128,8 @@ function App() {
         )}
 
         {/* Placeholder na przyszłe widoki */}
-        {activeTab === 'analysis' && (
-          <div className="text-center py-20 text-gray-500">
-            <h2 className="text-xl font-bold mb-2">Analiza</h2>
-            <p>Tutaj pojawią się wykresy wydatków.</p>
-          </div>
+        {activeTab === 'analytics' && (
+          <AnalyticsPage />
         )}
 
         {activeTab === 'history' && (
