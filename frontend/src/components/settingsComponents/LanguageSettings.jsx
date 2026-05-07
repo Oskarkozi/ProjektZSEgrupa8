@@ -4,7 +4,6 @@ export const LanguageTab = () => (
     <select className="block border p-2">
       <option>Polski</option>
       <option>Angielski</option>
-      <option>Francuski</option>
     </select>
   </div>
 );

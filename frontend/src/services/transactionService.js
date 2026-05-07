@@ -1,6 +1,6 @@
 // Funkcje Helpera dla Firebase - Transaction Service
-import { ref, set, push, update, remove } from "firebase/database";
-import { database } from "./firebase";
+import { ref, set, push, update, remove, get } from "firebase/database";
+import { auth, database } from "./firebase";
 
 export function writeUserData(userId, category, amount, type, date, description) {
   
@@ -40,4 +40,29 @@ export function removeUserData(userId, transactionId) {
       console.error("Błąd usuwania:", error);
       alert("Nie udało się usunąć transakcji.");
     });
+}
+
+export async function getUserProfile() {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("Użytkownik nie zalogowany");
+  }
+
+  try {
+    const userRef = ref(database, `users/${user.uid}/profile`);
+    const snapshot = await get(userRef);
+    
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      // Fallback na dane z Firebase Auth
+      return {
+        username: user.displayName || user.email || "Użytkownik",
+        email: user.email
+      };
+    }
+  } catch (error) {
+    console.error("Błąd pobierania profilu:", error);
+    throw error;
+  }
 }
