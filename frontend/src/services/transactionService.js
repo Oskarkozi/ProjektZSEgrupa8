@@ -66,3 +66,34 @@ export async function getUserProfile() {
     throw error;
   }
 }
+
+export async function updateUserProfile(userId, data) {
+  if (!userId) {
+    throw new Error("Brak ID użytkownika");
+  }
+
+  try {
+    const userProfileRef = ref(database, `users/${userId}`);
+    console.log("transactionService.updateUserProfile: writing to", `users/${userId}`, data);
+    await update(userProfileRef, data);
+    console.log("transactionService.updateUserProfile: success for", userId);
+    return true;
+  } catch (error) {
+    console.error("Błąd aktualizacji profilu:", error);
+    throw error;
+  }
+}
+
+
+export async function updateUserName(userId, username) {
+  if (!userId) {
+    throw new Error("Brak ID użytkownika");
+  }
+
+  try {
+    await updateUserProfile(userId, { userName: username });
+  } catch (error) {
+    console.error("Błąd aktualizacji nazwy użytkownika:", error);
+    throw error;
+  }
+}

@@ -1,4 +1,4 @@
-import { getCategoryLabel, getCategoryColor, categories as allCategories } from "../utils/categories"; // Poprawiono import
+import { getCategoryLabel, getCategoryColor, categories as allCategories } from "../utils/categories"; 
 
 // Komponent wyświetlający pojedynczą pozycję na liście
 export default function TransactionItem({ category, amount, type, date, onClick }) {
