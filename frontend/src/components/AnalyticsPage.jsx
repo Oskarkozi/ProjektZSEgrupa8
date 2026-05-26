@@ -49,6 +49,43 @@ function getDateRangeFilter(periodId) {
 	return startDate.toISOString().split('T')[0];
 }
 
+function getPreviousPeriodDateRange(periodId) {
+	const now = new Date();
+	let currentStart = new Date();
+	let previousStart = new Date();
+	let previousEnd = new Date();
+
+	switch (periodId) {
+		case 'week':
+			currentStart.setDate(now.getDate() - 7);
+			previousStart.setDate(now.getDate() - 14);
+			previousEnd.setDate(now.getDate() - 7);
+			break;
+		case 'month':
+			currentStart.setMonth(now.getMonth() - 1);
+			previousStart.setMonth(now.getMonth() - 2);
+			previousEnd.setMonth(now.getMonth() - 1);
+			break;
+		case 'quarter':
+			currentStart.setMonth(now.getMonth() - 3);
+			previousStart.setMonth(now.getMonth() - 6);
+			previousEnd.setMonth(now.getMonth() - 3);
+			break;
+		case 'year':
+			currentStart.setFullYear(now.getFullYear() - 1);
+			previousStart.setFullYear(now.getFullYear() - 2);
+			previousEnd.setFullYear(now.getFullYear() - 1);
+			break;
+		default:
+			return { start: '2000-01-01', end: '2000-01-01' };
+	}
+
+	return {
+		start: previousStart.toISOString().split('T')[0],
+		end: previousEnd.toISOString().split('T')[0],
+	};
+}
+
 function getPieChartDataFromTransactions(transactions, selectedCategory, timePeriod) {
 	const startDate = getDateRangeFilter(timePeriod);
 
@@ -173,14 +210,40 @@ export default function AnalyticsPage() {
 		};
 	}, [pieData]);
 
+	const previousPeriodComparison = useMemo(() => {
+		const now = new Date();
+		const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+		const currentMonthEnd = now.toISOString().split('T')[0];
+
+		const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
+		const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split('T')[0];
+
+		// Current month expenses (all categories)
+		const currentFiltered = transactions.filter(t => {
+			return t.date >= currentMonthStart && t.date <= currentMonthEnd && t.type === 'expense';
+		});
+
+		// Previous month expenses (all categories)
+		const previousFiltered = transactions.filter(t => {
+			return t.date >= previousMonthStart && t.date <= previousMonthEnd && t.type === 'expense';
+		});
+
+		const currentExpenses = currentFiltered.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+		const previousExpenses = previousFiltered.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
+		const difference = currentExpenses - previousExpenses;
+
+		return { currentExpenses, previousExpenses, difference };
+	}, [transactions]);
+
 	return (
-		<div className="space-y-6 pb-6">
-			<div className="text-center pt-2">
+		<div className="overflow-hidden max-h-screen h-screen flex flex-col" style={{ scrollbarWidth: 'none' }}>
+			<div className="text-center pt-2 flex-shrink-0">
 				<h2 className="text-2xl font-bold text-white">Twoje statystyki</h2>
 				<p className="mt-1 text-sm text-gray-400">Przychody vs wydatki dla wybranej kategorii w okresie: <span className="text-emerald-400 font-medium">{timePeriods.find(p => p.id === selectedTimePeriod)?.label}</span></p>
 			</div>
 
-			<div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(340px,380px)_minmax(0,700px)] lg:auto-rows-fr max-w-5xl mx-auto items-stretch">
+			<div className="flex-1 overflow-hidden flex flex-col gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+				<div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(340px,380px)_minmax(0,700px)] lg:auto-rows-fr max-w-5xl mx-auto items-stretch w-full">
 				<section className="rounded-2xl bg-gradient-to-br from-gray-800/60 to-gray-900/80 p-6 shadow-xl backdrop-blur-sm border border-gray-700/50">
 					<div className="space-y-5">
 						<div>
@@ -269,6 +332,39 @@ export default function AnalyticsPage() {
 						</ResponsiveContainer>
 					</div>
 				</section>
+			</div>
+
+			{selectedTimePeriod !== 'all' && (
+				<div className="flex-shrink-0 max-w-5xl mx-auto w-full px-4">
+					<section className="rounded-2xl bg-gradient-to-br from-gray-800/60 to-gray-900/80 p-6 shadow-xl backdrop-blur-sm border border-gray-700/50">
+						<h3 className="text-lg font-bold text-white mb-6">Porównanie miesięcy</h3>
+						
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+							<div className="rounded-lg bg-gray-900/50 p-4 border border-gray-700">
+								<p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Wydatki ten miesiąc</p>
+								<p className="text-2xl font-bold text-red-400">{'$' + Number(previousPeriodComparison.currentExpenses).toLocaleString('en-US')}</p>
+							</div>
+
+							<div className="rounded-lg bg-gray-900/50 p-4 border border-gray-700">
+								<p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Wydatki poprzedni miesiąc</p>
+								<p className="text-2xl font-bold text-gray-300">{'$' + Number(previousPeriodComparison.previousExpenses).toLocaleString('en-US')}</p>
+							</div>
+
+							<div className={`rounded-lg bg-gray-900/50 p-4 border border-gray-700`}>
+								<p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Różnica</p>
+								<div className="flex items-baseline gap-2">
+									<p className={`text-2xl font-bold ${previousPeriodComparison.difference < 0 ? 'text-emerald-400' : previousPeriodComparison.difference > 0 ? 'text-white-400' : 'text-gray-300'}`}>
+										{previousPeriodComparison.difference === 0 ? '0' : ('$' + Number(Math.abs(previousPeriodComparison.difference)).toLocaleString('en-US'))}
+									</p>
+									<span className={`text-sm font-medium ${previousPeriodComparison.difference < 0 ? 'text-emerald-400' : previousPeriodComparison.difference > 0 ? 'text-white-400' : 'text-gray-300'}`}>
+										{previousPeriodComparison.difference < 0 ? 'mniej' : previousPeriodComparison.difference > 0 ? 'więcej' : 'równo'}
+									</span>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			)}
 			</div>
 		</div>
 	);
