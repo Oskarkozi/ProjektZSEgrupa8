@@ -1,4 +1,4 @@
-import {FaHome, FaChartPie, FaList, FaUser} from 'react-icons/fa';
+import {FaHome, FaChartPie, FaList, FaUser, FaCalendar} from 'react-icons/fa';
 export default function Navbar({activeTab, onTabChange}) {
   const NavButton = ({ id ,label, icon: Icon}) => {
     const isActive = activeTab === id;
@@ -19,6 +19,7 @@ return (
         <div className="flex justify-between items-center max-w-md mx-auto">
           <NavButton id="home" label="Pulpit" icon={FaHome}/>
           <NavButton id="analytics" label="Statystyki" icon={FaChartPie}/>
+          <NavButton id="calendar" label="Kalendarz" icon={FaCalendar}/>
           <NavButton id="history" label="Historia" icon={FaList}/>
           <NavButton id="profile" label="Profil" icon={FaUser}/>
         </div>

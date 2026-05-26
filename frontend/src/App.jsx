@@ -5,6 +5,7 @@ import TransactionList from './components/TransactionList';
 import TransactionHistory from './components/TransactionHistory';
 import BottomNav from './components/Navbar';
 import Login from './Login';
+import CalendarPage from './components/CalendarPage';
 import Sett from './components/SettingsPage';
 import { auth, db, realtimeDB } from './services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -132,6 +133,12 @@ function App() {
           <div className="text-center py-20 text-gray-500">
             <h2 className="text-xl font-bold mb-2">Analiza</h2>
             <p>Tutaj pojawią się wykresy wydatków.</p>
+          </div>
+        )}
+        {activeTab === 'calendar' && (
+          <div className="text-center py-20 text-gray-500">
+              
+              <CalendarPage />
           </div>
         )}
 

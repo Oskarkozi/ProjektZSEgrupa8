@@ -39,8 +39,8 @@ export default function Settings() {
         <div className="w-1/3 flex items-center justify-center flex-col space-y-4">
             <button className={`p-2 ${activeTab === 'profile' ? 'font-bold text-blue-500' : ''}`}onClick={() => setActiveTab('profile')}>Profil</button>
             <button className={`p-2 ${activeTab === 'language' ? 'font-bold text-blue-500' : ''}`}onClick={() => setActiveTab('language')}>Ustawienia aplikacji</button>
-            <button className={`p-2 ${activeTab === 'notifications' ? 'font-bold text-blue-500' : ''}`}onClick={() => setActiveTab('notifications')}>Powiadomienia</button>
-            <button className={`p-2 ${activeTab === 'security' ? 'font-bold text-blue-500' : ''}`}onClick={() => setActiveTab('security')}>Bezpieczeństwo</button>
+            {/* <button className={`p-2 ${activeTab === 'notifications' ? 'font-bold text-blue-500' : ''}`}onClick={() => setActiveTab('notifications')}>Powiadomienia</button> */}
+            {/**<button className={`p-2 ${activeTab === 'security' ? 'font-bold text-blue-500' : ''}`}onClick={() => setActiveTab('security')}>Bezpieczeństwo</button>**/}
             <button className={`p-2 ${activeTab === 'about' ? 'font-bold text-blue-500' : ''}`}onClick={() => setActiveTab('about')}>O aplikacji</button>
             <button onClick={handleLogout} className="p-2 text-red-500 hover:text-red-700">Wyloguj</button>        
         </div>
