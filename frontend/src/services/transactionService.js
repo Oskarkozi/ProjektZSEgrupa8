@@ -2,6 +2,18 @@
 import { ref, set, push, update, remove, get } from "firebase/database";
 import { auth, database } from "./firebase";
 
+export function isTransactionPlanned(dateString, referenceDate = new Date()) {
+  if (!dateString) {
+    return false;
+  }
+
+  const transactionDate = new Date(`${dateString}T00:00:00`);
+  const normalizedReferenceDate = new Date(referenceDate);
+  normalizedReferenceDate.setHours(23, 59, 59, 999);
+
+  return transactionDate > normalizedReferenceDate;
+}
+
 export function writeUserData(userId, category, amount, type, date, description) {
   
   if (!userId) {

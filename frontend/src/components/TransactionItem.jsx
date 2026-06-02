@@ -1,7 +1,7 @@
 import { getCategoryLabel, getCategoryColor, categories as allCategories } from "../utils/categories"; 
 
 // Komponent wyświetlający pojedynczą pozycję na liście
-export default function TransactionItem({ category, amount, type, date, onClick }) {
+export default function TransactionItem({ category, amount, type, date, onClick, isPlanned = false }) {
   // Wykorzystujemy funkcje pomocnicze, które szukają w obu grupach (income i expense)
   const label = getCategoryLabel(category);
   const color = getCategoryColor(category);
@@ -16,10 +16,11 @@ export default function TransactionItem({ category, amount, type, date, onClick 
     
          <div className="flex flex-col">
             <span className="text-gray-200 font-medium group-hover:text-white transition-colors">{label}</span>
-            <span className="text-gray-500 text-xs">{date}</span>
+            <span className={`text-xs ${isPlanned ? 'text-amber-300' : 'text-gray-500'}`}>{date}</span>
+            {isPlanned && <span className="text-[11px] uppercase tracking-wider text-amber-400">Zaplanowana</span>}
          </div>
          </div>
-         <span className={`font-bold ${type === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
+         <span className={`font-bold ${type === 'income' ? 'text-emerald-400' : 'text-red-400'} ${isPlanned ? 'opacity-80' : ''}`}>
            {type === 'income' ? '+' : '-'}${parseFloat(amount).toFixed(2)}
          </span>
       </div>

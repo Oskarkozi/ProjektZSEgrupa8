@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ref, onValue, set } from "firebase/database";
 import { auth, database } from "../services/firebase";
-import { writeUserData, updateUserData, removeUserData } from "../services/transactionService";
+import { writeUserData, updateUserData, removeUserData, isTransactionPlanned } from "../services/transactionService";
 
 import Form from "./Add_transaction_form.jsx";
 import TransactionItem from "./TransactionItem.jsx";
@@ -35,8 +35,8 @@ export default function TransactionList({onShowHistory}) {
           id,
           ...val
         }));
-        
-        setTransactions(loadedTransactions.reverse());
+
+        setTransactions(loadedTransactions.reverse().filter((transaction) => !isTransactionPlanned(transaction.date)));
       } else {
         setTransactions([]);
       }

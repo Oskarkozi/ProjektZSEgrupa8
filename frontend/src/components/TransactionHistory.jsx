@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ref, onValue } from "firebase/database";
 import { auth, database } from "../services/firebase";
-import { writeUserData, updateUserData, removeUserData } from "../services/transactionService";
+import { writeUserData, updateUserData, removeUserData, isTransactionPlanned } from "../services/transactionService";
 
 import Form from "./Add_transaction_form.jsx";
 import TransactionItem from "./TransactionItem.jsx";
@@ -13,7 +13,7 @@ import TransactionDetailsModal from "./TransactionDetailsModal.jsx";
 // Components moved to their own files
 
 
-export default function TransactionHistory() {
+export default function TransactionHistory({ scrollToTransactionId = null }) {
   const [isFormVisible, setIsFormVisible] = useState(false); // Do widoczności formularza
   const [selectedTransaction, setSelectedTransaction] = useState(null); // Do podglądu szczegółów
   const [editingTransaction, setEditingTransaction] = useState(null); // Do edycji
@@ -45,6 +45,22 @@ export default function TransactionHistory() {
     return () => unsubscribe();
   }, [currentUserId]);
 
+  useEffect(() => {
+    if (!scrollToTransactionId) return;
+
+    const element = document.getElementById(`transaction-${scrollToTransactionId}`);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+      element.classList.add("ring-2", "ring-emerald-400", "ring-offset-2", "ring-offset-gray-900");
+
+      const timeoutId = window.setTimeout(() => {
+        element.classList.remove("ring-2", "ring-emerald-400", "ring-offset-2", "ring-offset-gray-900");
+      }, 2000);
+
+      return () => window.clearTimeout(timeoutId);
+    }
+  }, [scrollToTransactionId, transactions]);
+
   const handleTransactionAdded = () => {
     setIsFormVisible(false);
     setEditingTransaction(null);
@@ -60,10 +76,10 @@ export default function TransactionHistory() {
   };
 
   const handleEditClick = (transaction) => {
-      setEditingTransaction(transaction); // Ustawiamy transakcję, którą edytujemy
+      setEditingTransaction(transaction); // Ustawia transakcję, którą edytujemy
       setRepeatTransaction(null);
-      setIsFormVisible(true); // Otwieramy format
-      setSelectedTransaction(null); // Zamykamy podgląd
+      setIsFormVisible(true); // Otwiera format
+      setSelectedTransaction(null); // Zamyka podgląd
   };
 
     const handleRepeatClick = (transaction) => {
@@ -126,14 +142,16 @@ export default function TransactionHistory() {
       <div className="space-y-3">
         {transactions.length > 0 ? (
           transactions.map((transaction) => (
-            <TransactionItem 
-              key={transaction.id}
-              category={transaction.category} 
-              amount={transaction.amount} 
-              type={transaction.type}
-              date={transaction.date}
-              onClick={() => setSelectedTransaction(transaction)}
-            />
+            <div key={transaction.id} id={`transaction-${transaction.id}`}>
+              <TransactionItem 
+                category={transaction.category} 
+                amount={transaction.amount} 
+                type={transaction.type}
+                date={transaction.date}
+                isPlanned={isTransactionPlanned(transaction.date)}
+                onClick={() => setSelectedTransaction(transaction)}
+              />
+            </div>
           ))
         ) : (
           <div className="text-center py-8 text-gray-500 bg-gray-800/30 rounded-xl border border-dashed border-gray-700">

@@ -45,51 +45,7 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
             <form onSubmit={handleSubmit} className="space-y-4">
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="category" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Kategoria</label>
-                    <select id="category"
-                     value={category}
-                     onChange={(e) => setCategory(e.target.value)}
-                     className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-                      required
-                    >
-                      <option value="" disabled hidden>Wybierz kategorię</option>
-                      {Object.values(availableCategories).map((cat)=>(
-                        <option key={cat.id} value={cat.id}>
-                          {cat.label}
-                        </option>
-                      ))}
-                      </select>
-                  </div>
-                  <div>
-                    <label htmlFor="amount" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Kwota</label>
-                    <input
-                      type="number"
-                      id="amount"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-                      placeholder="0.00"
-                      min="0.01"
-                      step="0.01"
-                      required
-                    />
-                  </div>
-              </div>
-
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                     <label htmlFor="date" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Data</label>
-                     <input
-                        type="date"
-                        id="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-                        required
-                     />
-                  </div>
-                   <div className="flex items-end pb-3 space-x-6"> 
+                <div className="flex items-end pb-3 space-x-6"> 
                     <label className="inline-flex items-center text-gray-300 cursor-pointer hover:text-white transition-colors">
                       <input
                         type="radio"
@@ -112,6 +68,50 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
                       />
                       <span className="ml-2 text-sm">Wydatek</span>
                     </label>
+                  </div>
+                  <div>
+                    <label htmlFor="category" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Kategoria</label>
+                    <select id="category"
+                     value={category}
+                     onChange={(e) => setCategory(e.target.value)}
+                     className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                      required
+                    >
+                      <option value="" disabled hidden>Wybierz kategorię</option>
+                      {Object.values(availableCategories).map((cat)=>(
+                        <option key={cat.id} value={cat.id}>
+                          {cat.label}
+                        </option>
+                      ))}
+                      </select>
+                  </div>
+              </div>
+
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                     <label htmlFor="date" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Data</label>
+                     <input
+                        type="date"
+                        id="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                        required
+                     />
+                  </div>
+                   <div>
+                    <label htmlFor="amount" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Kwota</label>
+                    <input
+                      type="number"
+                      id="amount"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                      placeholder="0.00"
+                      min="0.01"
+                      step="0.01"
+                      required
+                    />
                   </div>
                </div>
 

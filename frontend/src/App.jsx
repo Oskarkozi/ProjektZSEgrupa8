@@ -10,6 +10,7 @@ import Sett from './components/SettingsPage';
 import { auth, db, realtimeDB } from './services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, get, onValue } from "firebase/database";
+import { isTransactionPlanned } from './services/transactionService';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [totals, setTotals] = useState({ balance: 0, income: 0, expenses: 0 }); 
   const [activeTab, setActiveTab] = useState('home'); // Stan nawigacji
+  const [historyTargetTransactionId, setHistoryTargetTransactionId] = useState(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -62,6 +64,10 @@ function App() {
 
         if (data) {
           Object.values(data).forEach(transaction => {
+            if (isTransactionPlanned(transaction.date)) {
+              return;
+            }
+
             const amount = parseFloat(transaction.amount);
             if (!isNaN(amount)) {
               if (transaction.type === 'income') {
@@ -138,7 +144,15 @@ function App() {
         {activeTab === 'calendar' && (
           <div className="text-center py-20 text-gray-500">
               
-              <CalendarPage />
+              <CalendarPage
+                onOpenTransactionInHistory={(transactionId) => {
+                  setActiveTab('history');
+                  setHistoryTargetTransactionId(null);
+                  window.setTimeout(() => {
+                    setHistoryTargetTransactionId(transactionId);
+                  }, 0);
+                }}
+              />
           </div>
         )}
 
@@ -146,7 +160,9 @@ function App() {
           <div className="text-center py-20 text-gray-500">
              <h2 className="text-xl font-bold mb-2">Pełna Historia</h2>
              <p>Lista wszystkich transakcji.</p>
-             <TransactionHistory />
+             <TransactionHistory
+              scrollToTransactionId={historyTargetTransactionId}
+             />
           </div>
         )}
 
