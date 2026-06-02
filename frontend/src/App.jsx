@@ -6,16 +6,20 @@ import TransactionList from './components/TransactionList';
 import TransactionHistory from './components/TransactionHistory';
 import BottomNav from './components/Navbar';
 import Login from './Login';
+import CalendarPage from './components/CalendarPage';
+import Sett from './components/SettingsPage';
 import { auth, db, realtimeDB } from './services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, get, onValue } from "firebase/database";
+import { isTransactionPlanned } from './services/transactionService';
 
 
 function App() {
 
   const [user, setUser] = useState(null);
-  const [totals, setTotals] = useState({ balance: 0, income: 0, expenses: 0 }); 
+  const [totals, setTotals] = useState({ balance: 0, income: 0, expenses: 0 });
   const [activeTab, setActiveTab] = useState('home'); // Stan nawigacji
+  const [historyTargetTransactionId, setHistoryTargetTransactionId] = useState(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -26,22 +30,22 @@ function App() {
       console.log('Stan użytkownika:', currentUser ? 'Zalogowany' : 'Wylogowany');
 
       if (currentUser) {
-      try {
-        const userRef = ref(realtimeDB, "users/" + currentUser.uid);
-        const snapshot = await get(userRef);
-        if (snapshot.exists()) {
-          setUser({ ...currentUser, ...snapshot.val() });
-          console.log("Zaktualizowany user:", { ...currentUser, ...snapshot.val() });
-        } else {
-          setUser(currentUser); // fallback jeśli brak danych w bazie
+        try {
+          const userRef = ref(realtimeDB, "users/" + currentUser.uid);
+          const snapshot = await get(userRef);
+          if (snapshot.exists()) {
+            setUser({ ...currentUser, ...snapshot.val() });
+            console.log("Zaktualizowany user:", { ...currentUser, ...snapshot.val() });
+          } else {
+            setUser(currentUser); // fallback jeśli brak danych w bazie
+          }
+        } catch (err) {
+          console.error("Błąd pobierania danych użytkownika:", err);
+          setUser(currentUser);
         }
-      } catch (err) {
-        console.error("Błąd pobierania danych użytkownika:", err);
-        setUser(currentUser); 
+      } else {
+        setUser(null);
       }
-    } else {
-      setUser(null);
-    }
       setLoading(false);
     });
 
@@ -53,7 +57,7 @@ function App() {
   useEffect(() => {
     if (user?.uid) {
       const expensesRef = ref(realtimeDB, 'users/' + user.uid + '/expenses');
-      
+
       const unsubscribe = onValue(expensesRef, (snapshot) => {
         const data = snapshot.val();
         let currentIncome = 0;
@@ -61,6 +65,10 @@ function App() {
 
         if (data) {
           Object.values(data).forEach(transaction => {
+            if (isTransactionPlanned(transaction.date)) {
+              return;
+            }
+
             const amount = parseFloat(transaction.amount);
             if (!isNaN(amount)) {
               if (transaction.type === 'income') {
@@ -71,7 +79,7 @@ function App() {
             }
           });
         }
-        
+
         setTotals({
           balance: currentIncome - currentExpenses,
           income: currentIncome,
@@ -83,7 +91,7 @@ function App() {
     } else {
       setTotals({ balance: 0, income: 0, expenses: 0 });
     }
-  }, [user]); 
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -115,13 +123,13 @@ function App() {
       <Header userName={user?.userName || user?.displayName || "Użytkownikowi"} />
 
       <main className="px-4 space-y-6">
-        
+
         {activeTab === 'home' && (
           <>
-            <BalanceCard 
-              total={totals.balance.toFixed(2)} 
-              income={totals.income.toFixed(2)} 
-              expenses={totals.expenses.toFixed(2)} 
+            <BalanceCard
+              total={totals.balance.toFixed(2)}
+              income={totals.income.toFixed(2)}
+              expenses={totals.expenses.toFixed(2)}
             />
             <TransactionList onShowHistory={() => setActiveTab('history')} />
           </>
@@ -131,23 +139,34 @@ function App() {
         {activeTab === 'analytics' && (
           <AnalyticsPage />
         )}
+        {activeTab === 'calendar' && (
+          <div className="text-center py-20 text-gray-500">
+
+            <CalendarPage
+              onOpenTransactionInHistory={(transactionId) => {
+                setActiveTab('history');
+                setHistoryTargetTransactionId(null);
+                window.setTimeout(() => {
+                  setHistoryTargetTransactionId(transactionId);
+                }, 0);
+              }}
+            />
+          </div>
+        )}
 
         {activeTab === 'history' && (
-          <div className="w-full">
-             <h2 className="text-xl font-bold mb-6 text-center">Pełna Historia</h2>
-             <TransactionHistory />
+          <div className="text-center py-20 text-gray-500">
+            <h2 className="text-xl font-bold mb-2">Pełna Historia</h2>
+            <p>Lista wszystkich transakcji.</p>
+            <TransactionHistory
+              scrollToTransactionId={historyTargetTransactionId}
+            />
           </div>
         )}
 
         {activeTab === 'profile' && (
           <div className="text-center py-20 text-gray-500">
-             <h2 className="text-xl font-bold mb-2">Profil Użytkownika</h2>
-             <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition-colors mt-4"
-            >
-              Wyloguj się
-            </button>
+            <Sett />
           </div>
         )}
 
