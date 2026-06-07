@@ -166,7 +166,7 @@ function getCategoryTitle(categoryId) {
 	return allCategories[categoryId]?.label || categoryId;
 }
 
-export default function AnalyticsPage() {
+export default function AnalyticsPage({ isDarkTheme = true }) {
 	const [selectedCategory, setSelectedCategory] = useState('all');
 	const [selectedTimePeriod, setSelectedTimePeriod] = useState('month');
 	const [transactions, setTransactions] = useState([]);
@@ -238,23 +238,23 @@ export default function AnalyticsPage() {
 	return (
 		<div className="overflow-hidden max-h-screen h-screen flex flex-col" style={{ scrollbarWidth: 'none' }}>
 			<div className="text-center pt-2 flex-shrink-0">
-				<h2 className="text-2xl font-bold text-white">Twoje statystyki</h2>
-				<p className="mt-1 text-sm text-gray-400">Przychody vs wydatki dla wybranej kategorii w okresie: <span className="text-emerald-400 font-medium">{timePeriods.find(p => p.id === selectedTimePeriod)?.label}</span></p>
+				<h2 className={`text-2xl font-bold ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>Twoje statystyki</h2>
+				<p className={`mt-1 text-sm ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>Przychody vs wydatki dla wybranej kategorii w okresie: <span className="text-emerald-400 font-medium">{timePeriods.find(p => p.id === selectedTimePeriod)?.label}</span></p>
 			</div>
 
 			<div className="flex-1 overflow-hidden flex flex-col gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
 				<div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(340px,380px)_minmax(0,700px)] lg:auto-rows-fr max-w-5xl mx-auto items-stretch w-full">
-				<section className="rounded-2xl bg-gradient-to-br from-gray-800/60 to-gray-900/80 p-6 shadow-xl backdrop-blur-sm border border-gray-700/50">
+				<section className={`rounded-2xl p-6 shadow-xl backdrop-blur-sm border ${isDarkTheme ? 'bg-gradient-to-br from-gray-800/60 to-gray-900/80 border-gray-700/50' : 'bg-white border-gray-300'}`}>
 					<div className="space-y-5">
 						<div>
-							<label className="block text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wider">Kategoria</label>
+							<label className={`block text-sm font-semibold mb-2 uppercase tracking-wider ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>Kategoria</label>
 							<select
 								value={selectedCategory}
 								onChange={(e) => setSelectedCategory(e.target.value)}
-								className="w-full px-4 py-3 bg-gray-900/80 border border-gray-600 rounded-lg text-white font-medium focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all"
+								className={`w-full px-4 py-3 border rounded-lg font-medium focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all ${isDarkTheme ? 'bg-gray-900/80 border-gray-600 text-white' : 'bg-gray-100 border-gray-300 text-gray-900'}`}
 							>
 								{categoryOptions.map((category) => (
-									<option key={category.id} value={category.id} className="bg-gray-900">
+									<option key={category.id} value={category.id} className={isDarkTheme ? 'bg-gray-900' : 'bg-white'}>
 										{category.label.charAt(0).toUpperCase() + category.label.slice(1)}
 									</option>
 								))}
@@ -262,14 +262,14 @@ export default function AnalyticsPage() {
 						</div>
 
 						<div>
-							<label className="block text-sm font-semibold text-gray-300 mb-2 uppercase tracking-wider">Okres czasu</label>
+							<label className={`block text-sm font-semibold mb-2 uppercase tracking-wider ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>Okres czasu</label>
 							<select
 								value={selectedTimePeriod}
 								onChange={(e) => setSelectedTimePeriod(e.target.value)}
-								className="w-full px-4 py-3 bg-gray-900/80 border border-gray-600 rounded-lg text-white font-medium focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all"
+								className={`w-full px-4 py-3 border rounded-lg font-medium focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all ${isDarkTheme ? 'bg-gray-900/80 border-gray-600 text-white' : 'bg-gray-100 border-gray-300 text-gray-900'}`}
 							>
 								{timePeriods.map((period) => (
-									<option key={period.id} value={period.id} className="bg-gray-900">
+									<option key={period.id} value={period.id} className={isDarkTheme ? 'bg-gray-900' : 'bg-white'}>
 										{period.label}
 									</option>
 								))}
@@ -296,9 +296,9 @@ export default function AnalyticsPage() {
 					</div>
 				</section>
 
-				<section className="rounded-2xl bg-gradient-to-br from-gray-800/60 to-gray-900/80 p-6 shadow-xl backdrop-blur-sm border border-gray-700/50 flex flex-col">
+				<section className={`rounded-2xl p-6 shadow-xl backdrop-blur-sm border flex flex-col ${isDarkTheme ? 'bg-gradient-to-br from-gray-800/60 to-gray-900/80 border-gray-700/50' : 'bg-white border-gray-300'}`}>
 					<div className="mb-4 text-center">
-						<h3 className="text-lg font-bold text-white">Rozkład: {getCategoryTitle(selectedCategory)}</h3>
+						<h3 className={`text-lg font-bold ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>Rozkład: {getCategoryTitle(selectedCategory)}</h3>
 					</div>
 
 					<div className="flex items-center justify-center flex-1 min-h-[350px]">
@@ -320,10 +320,10 @@ export default function AnalyticsPage() {
 								</Pie>
 								<Tooltip
 									contentStyle={{
-										backgroundColor: '#111827',
-										border: '1px solid #374151',
+										backgroundColor: isDarkTheme ? '#111827' : '#ffffff',
+										border: isDarkTheme ? '1px solid #374151' : '1px solid #d1d5db',
 										borderRadius: '8px',
-										color: '#f9fafb',
+										color: isDarkTheme ? '#f9fafb' : '#111827',
 									}}
 									formatter={(value) => `$${Number(value).toLocaleString('en-US')}`}
 								/>
@@ -336,27 +336,27 @@ export default function AnalyticsPage() {
 
 			{selectedTimePeriod !== 'all' && (
 				<div className="flex-shrink-0 max-w-5xl mx-auto w-full px-4">
-					<section className="rounded-2xl bg-gradient-to-br from-gray-800/60 to-gray-900/80 p-6 shadow-xl backdrop-blur-sm border border-gray-700/50">
-						<h3 className="text-lg font-bold text-white mb-6">Porównanie miesięcy</h3>
+					<section className={`rounded-2xl p-6 shadow-xl backdrop-blur-sm border ${isDarkTheme ? 'bg-gradient-to-br from-gray-800/60 to-gray-900/80 border-gray-700/50' : 'bg-white border-gray-300'}`}>
+						<h3 className={`text-lg font-bold mb-6 ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>Porównanie miesięcy</h3>
 						
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-							<div className="rounded-lg bg-gray-900/50 p-4 border border-gray-700">
+							<div className={`rounded-lg p-4 border ${isDarkTheme ? 'bg-gray-900/50 border-gray-700' : 'bg-gray-100 border-gray-300'}`}>
 								<p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Wydatki ten miesiąc</p>
 								<p className="text-2xl font-bold text-red-400">{'$' + Number(previousPeriodComparison.currentExpenses).toLocaleString('en-US')}</p>
 							</div>
 
-							<div className="rounded-lg bg-gray-900/50 p-4 border border-gray-700">
+							<div className={`rounded-lg p-4 border ${isDarkTheme ? 'bg-gray-900/50 border-gray-700' : 'bg-gray-100 border-gray-300'}`}>
 								<p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Wydatki poprzedni miesiąc</p>
-								<p className="text-2xl font-bold text-gray-300">{'$' + Number(previousPeriodComparison.previousExpenses).toLocaleString('en-US')}</p>
+								<p className={`text-2xl font-bold ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>{'$' + Number(previousPeriodComparison.previousExpenses).toLocaleString('en-US')}</p>
 							</div>
 
-							<div className={`rounded-lg bg-gray-900/50 p-4 border border-gray-700`}>
+							<div className={`rounded-lg p-4 border ${isDarkTheme ? 'bg-gray-900/50 border-gray-700' : 'bg-gray-100 border-gray-300'}`}>
 								<p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Różnica</p>
 								<div className="flex items-baseline gap-2">
-									<p className={`text-2xl font-bold ${previousPeriodComparison.difference < 0 ? 'text-emerald-400' : previousPeriodComparison.difference > 0 ? 'text-white-400' : 'text-gray-300'}`}>
+									<p className={`text-2xl font-bold ${previousPeriodComparison.difference < 0 ? 'text-emerald-400' : previousPeriodComparison.difference > 0 ? 'text-red-400' : (isDarkTheme ? 'text-gray-300' : 'text-gray-700')}`}>
 										{previousPeriodComparison.difference === 0 ? '0' : ('$' + Number(Math.abs(previousPeriodComparison.difference)).toLocaleString('en-US'))}
 									</p>
-									<span className={`text-sm font-medium ${previousPeriodComparison.difference < 0 ? 'text-emerald-400' : previousPeriodComparison.difference > 0 ? 'text-white-400' : 'text-gray-300'}`}>
+									<span className={`text-sm font-medium ${previousPeriodComparison.difference < 0 ? 'text-emerald-400' : previousPeriodComparison.difference > 0 ? 'text-red-400' : (isDarkTheme ? 'text-gray-300' : 'text-gray-700')}`}>
 										{previousPeriodComparison.difference < 0 ? 'mniej' : previousPeriodComparison.difference > 0 ? 'więcej' : 'równo'}
 									</span>
 								</div>

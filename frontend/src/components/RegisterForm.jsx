@@ -61,7 +61,8 @@
                 email: formData.email,
                 userName: formData.username,
                 dateOfBirth: formData.dateOfBirth,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                isDarkTheme: true
             });
                 
                 console.log('Konto utworzone pomyślnie!');

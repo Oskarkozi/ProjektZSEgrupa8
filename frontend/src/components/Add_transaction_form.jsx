@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { categories } from '../utils/categories';
 import { set } from 'firebase/database';
 
-export default function TransactionForm({ userId, onSaveTransaction, onCloseForm, initialData = null, isEditing = false }){
+export default function TransactionForm({ userId, onSaveTransaction, onCloseForm, initialData = null, isEditing = false, isDarkTheme = true }){
     const [selectedType, setSelectedType] = useState(initialData?.type || 'income');
     const [category, setCategory] = useState(initialData?.category || '');
     const [amount, setAmount] = useState(initialData?.amount || '');
@@ -40,41 +40,41 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
 
     return(
         <div>
-            <h2 className="text-xl font-bold text-gray-100 mb-4">{isEditing ? 'Edytuj transakcję' : 'Nowa transakcja'}</h2>
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+        <h2 className={`text-xl font-bold mb-4 ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>{isEditing ? 'Edytuj transakcję' : 'Nowa transakcja'}</h2>
+        <div className={`rounded-xl p-6 border ${isDarkTheme ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-300'}`}>
             <form onSubmit={handleSubmit} className="space-y-4">
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-end pb-3 space-x-6"> 
-                    <label className="inline-flex items-center text-gray-300 cursor-pointer hover:text-white transition-colors">
+                    <label className={`inline-flex items-center cursor-pointer transition-colors ${isDarkTheme ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}>
                       <input
                         type="radio"
                         name="expenseOrIncome"
                         value="income"
                         checked={selectedType === 'income'}
                         onChange={handleTypeChange}
-                        className="w-4 h-4 text-emerald-500 bg-gray-700 border-gray-600 focus:ring-emerald-500 focus:ring-offset-gray-800" 
+                        className={`w-4 h-4 text-emerald-500 ${isDarkTheme ? 'bg-gray-700 border-gray-600 focus:ring-offset-gray-800' : 'bg-white border-gray-300 focus:ring-offset-white'} focus:ring-emerald-500`} 
                       />
                       <span className="ml-2 text-sm">Dochód</span>
                     </label>
-                    <label className="inline-flex items-center text-gray-300 cursor-pointer hover:text-white transition-colors">
+                    <label className={`inline-flex items-center cursor-pointer transition-colors ${isDarkTheme ? 'text-gray-300 hover:text-white' : 'text-gray-700 hover:text-gray-900'}`}>
                       <input
                         type="radio"
                         name="expenseOrIncome"
                         value="expense"
                         checked={selectedType === 'expense'}
                         onChange={handleTypeChange}
-                        className="w-4 h-4 text-red-500 bg-gray-700 border-gray-600 focus:ring-red-500 focus:ring-offset-gray-800"
+                        className={`w-4 h-4 text-red-500 ${isDarkTheme ? 'bg-gray-700 border-gray-600 focus:ring-offset-gray-800' : 'bg-white border-gray-300 focus:ring-offset-white'} focus:ring-red-500`}
                       />
                       <span className="ml-2 text-sm">Wydatek</span>
                     </label>
                   </div>
                   <div>
-                    <label htmlFor="category" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Kategoria</label>
+                    <label htmlFor="category" className={`block text-xs font-medium mb-1 uppercase tracking-wider ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>Kategoria</label>
                     <select id="category"
                      value={category}
                      onChange={(e) => setCategory(e.target.value)}
-                     className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                     className={`w-full p-2.5 border rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
                       required
                     >
                       <option value="" disabled hidden>Wybierz kategorię</option>
@@ -89,24 +89,24 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                     <label htmlFor="date" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Data</label>
+                     <label htmlFor="date" className={`block text-xs font-medium mb-1 uppercase tracking-wider ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>Data</label>
                      <input
                         type="date"
                         id="date"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
-                        className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                        className={`w-full p-2.5 border rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
                         required
                      />
                   </div>
                    <div>
-                    <label htmlFor="amount" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Kwota</label>
+                      <label htmlFor="amount" className={`block text-xs font-medium mb-1 uppercase tracking-wider ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>Kwota</label>
                     <input
                       type="number"
                       id="amount"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
-                      className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+                      className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
                       placeholder="0.00"
                       min="0.01"
                       step="0.01"
@@ -116,12 +116,12 @@ export default function TransactionForm({ userId, onSaveTransaction, onCloseForm
                </div>
 
                 <div>
-                    <label htmlFor="description" className="block text-gray-400 text-xs font-medium mb-1 uppercase tracking-wider">Opis (opcjonalnie)</label>
+                    <label htmlFor="description" className={`block text-xs font-medium mb-1 uppercase tracking-wider ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>Opis (opcjonalnie)</label>
                     <textarea
                         id="description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors min-h-20"
+                      className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors min-h-20 ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
                         placeholder="Dodatkowe informacje..."
                     />
                 </div>

@@ -20,12 +20,12 @@ const MONTHS = [
     "Grudzień",
 ];
 
-function DayTile({ dayNumber, className = "", markers = [], onClick }) {
+function DayTile({ dayNumber, className = "", markers = [], onClick, isDarkTheme = true }) {
     return (
         <button
             type="button"
             onClick={onClick}
-            className={"h-24 w-full rounded-xl p-3 text-left text-white shadow-sm flex flex-col justify-between overflow-hidden transition-transform hover:-translate-y-0.5 hover:shadow-md " + className}
+            className={"h-24 w-full rounded-xl p-3 text-left shadow-sm flex flex-col justify-between overflow-hidden transition-transform hover:-translate-y-0.5 hover:shadow-md " + (isDarkTheme ? "text-white " : "text-gray-900 ") + className}
         >
             <span className="text-sm font-medium">{dayNumber}</span>
             {markers.length > 0 && (
@@ -44,26 +44,26 @@ function DayTile({ dayNumber, className = "", markers = [], onClick }) {
     );
 }
 
-function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTransaction, onOpenTransactionInHistory }) {
+function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTransaction, onOpenTransactionInHistory, isDarkTheme = true }) {
     if (!day) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
             <div
-                className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-950 p-5 text-left shadow-2xl"
+                className={`w-full max-w-lg rounded-2xl border p-5 text-left shadow-2xl ${isDarkTheme ? 'border-slate-700 bg-slate-950' : 'border-gray-300 bg-white'}`}
                 onClick={(event) => event.stopPropagation()}
             >
                 <div className="mb-4 flex items-start justify-between gap-4">
                     <div>
-                        <h2 className="text-xl font-bold text-white">
+                        <h2 className={`text-xl font-bold ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>
                             Transakcje z dnia {day} {MONTHS[monthIndex]}
                         </h2>
-                        <p className="text-sm text-slate-400">Kliknij transakcję, aby przejść do historii.</p>
+                        <p className={`text-sm ${isDarkTheme ? 'text-slate-400' : 'text-gray-600'}`}>Kliknij transakcję, aby przejść do historii.</p>
                     </div>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-full px-3 py-1 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+                        className={`rounded-full px-3 py-1 transition-colors ${isDarkTheme ? 'text-slate-400 hover:bg-slate-800 hover:text-white' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-900'}`}
                     >
                         ✕
                     </button>
@@ -80,7 +80,7 @@ function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTra
                                     key={transaction.id}
                                     type="button"
                                     onClick={() => onOpenTransactionInHistory(transaction.id)}
-                                    className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-900/80 p-3 text-left transition-colors hover:border-slate-600 hover:bg-slate-800"
+                                    className={`flex w-full items-center justify-between gap-3 rounded-xl border p-3 text-left transition-colors ${isDarkTheme ? 'border-slate-800 bg-slate-900/80 hover:border-slate-600 hover:bg-slate-800' : 'border-gray-200 bg-gray-50 hover:border-gray-300 hover:bg-gray-100'}`}
                                 >
                                     <div className="flex items-center gap-3">
                                         <span
@@ -88,8 +88,8 @@ function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTra
                                             style={{ backgroundColor: color }}
                                         />
                                         <div className="flex flex-col">
-                                            <span className="font-medium text-white">{label}</span>
-                                            <span className="text-xs text-slate-400">
+                                            <span className={`font-medium ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>{label}</span>
+                                            <span className={`text-xs ${isDarkTheme ? 'text-slate-400' : 'text-gray-600'}`}>
                                                 {transaction.description || "Brak opisu"}
                                             </span>
                                         </div>
@@ -98,14 +98,14 @@ function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTra
                                         <div className={`font-semibold ${transaction.type === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
                                             {transaction.type === 'income' ? '+' : '-'}${parseFloat(transaction.amount).toFixed(2)}
                                         </div>
-                                        <div className="text-xs text-slate-500">{transaction.date}</div>
+                                        <div className={`text-xs ${isDarkTheme ? 'text-slate-500' : 'text-gray-500'}`}>{transaction.date}</div>
                                     </div>
                                 </button>
                             );
                         })
                     ) : (
                         <div>
-                        <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/40 p-4 text-sm text-slate-400">
+                        <div className={`rounded-xl border border-dashed p-4 text-sm ${isDarkTheme ? 'border-slate-700 bg-slate-900/40 text-slate-400' : 'border-gray-300 bg-gray-50 text-gray-600'}`}>
                             Brak transakcji w tym dniu.
                                                        
                         </div>
@@ -128,7 +128,7 @@ function getDaysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
 }
 
-export default function CalendarPage({ onOpenTransactionInHistory }) {
+export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme = true }) {
     const today = new Date();
     const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
     const [selectedYear, setSelectedYear] = useState(today.getFullYear());
@@ -253,7 +253,7 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
     };
 
     return (
-        <section className="w-full p-4 text-gray-100">
+        <section className={`w-full p-4 ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>
             <div className="mb-4 flex flex-wrap items-center gap-2">
                 <h1 className="mr-4 text-2xl font-bold">Kalendarz</h1>
 
@@ -262,7 +262,7 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
                     id="month"
                     value={selectedMonth}
                     onChange={(event) => setSelectedMonth(Number(event.target.value))}
-                    className="rounded-md border border-slate-600 bg-slate-800 px-3 py-2 text-sm"
+                    className={`rounded-md border px-3 py-2 text-sm ${isDarkTheme ? 'border-slate-600 bg-slate-800' : 'border-gray-300 bg-white'}`}
                 >
                     {MONTHS.map((monthName, monthIndex) => (
                         <option key={monthName} value={monthIndex}>
@@ -276,7 +276,7 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
                     id="year"
                     value={selectedYear}
                     onChange={(event) => setSelectedYear(Number(event.target.value))}
-                    className="rounded-md border border-slate-600 bg-slate-800 px-3 py-2 text-sm"
+                    className={`rounded-md border px-3 py-2 text-sm ${isDarkTheme ? 'border-slate-600 bg-slate-800' : 'border-gray-300 bg-white'}`}
                 >
                     {years.map((year) => (
                         <option key={year} value={year}>
@@ -287,7 +287,7 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
             </div>
             <div className="grid grid-cols-7 gap-2">
                 {["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Niedz"].map((day) => (
-                    <div key={day} className="text-sm font-medium text-gray-400">
+                    <div key={day} className={`text-sm font-medium ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>
                         {day}
                     </div>
                 ))}
@@ -299,6 +299,7 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
                         key={`empty-${i}`}
                         dayNumber={""}
                         className={"bg-transparent border border-transparent"}
+                        isDarkTheme={isDarkTheme}
                     />
                 ))}
 
@@ -309,7 +310,7 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
                         selectedYear === today.getFullYear();
                     const bgClass = isToday
                         ? "bg-emerald-500/80 border-emerald-400"
-                        : "bg-slate-800/60 border border-slate-700";
+                        : (isDarkTheme ? "bg-slate-800/60 border border-slate-700" : "bg-white border border-gray-300");
                     const dayMarkers = transactionsByDay[day] || [];
 
                     return (
@@ -319,6 +320,7 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
                             className={bgClass}
                             markers={dayMarkers}
                             onClick={() => setSelectedDay(day)}
+                            isDarkTheme={isDarkTheme}
                         />
                     );
                 })}
@@ -334,15 +336,16 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
                     setSelectedDay(null);
                     onOpenTransactionInHistory?.(transactionId);
                 }}
+                isDarkTheme={isDarkTheme}
             />
 
             {isFormVisible && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-                    <div className="relative w-full max-w-3xl rounded-2xl border border-gray-700 bg-gray-900 p-6 shadow-2xl">
+                    <div className={`relative w-full max-w-3xl rounded-2xl border p-6 shadow-2xl ${isDarkTheme ? 'border-gray-700 bg-gray-900' : 'border-gray-300 bg-white'}`}>
                         <button
                             type="button"
                             onClick={handleCloseForm}
-                            className="absolute right-4 top-4 text-gray-400 transition-colors hover:text-white"
+                            className={`absolute right-4 top-4 transition-colors ${isDarkTheme ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}
                         >
                             ✕
                         </button>
@@ -352,6 +355,7 @@ export default function CalendarPage({ onOpenTransactionInHistory }) {
                             onCloseForm={handleCloseForm}
                             initialData={formInitialData}
                             isEditing={false}
+                            isDarkTheme={isDarkTheme}
                         />
                     </div>
                 </div>

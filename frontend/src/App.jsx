@@ -20,6 +20,7 @@ function App() {
   const [totals, setTotals] = useState({ balance: 0, income: 0, expenses: 0 });
   const [activeTab, setActiveTab] = useState('home'); // Stan nawigacji
   const [historyTargetTransactionId, setHistoryTargetTransactionId] = useState(null);
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   const [loading, setLoading] = useState(true);
 
@@ -34,17 +35,22 @@ function App() {
           const userRef = ref(realtimeDB, "users/" + currentUser.uid);
           const snapshot = await get(userRef);
           if (snapshot.exists()) {
-            setUser({ ...currentUser, ...snapshot.val() });
-            console.log("Zaktualizowany user:", { ...currentUser, ...snapshot.val() });
+            const userData = snapshot.val();
+            setUser({ ...currentUser, ...userData });
+            setIsDarkTheme(userData.isDarkTheme ?? true);
+            console.log("Zaktualizowany user:", { ...currentUser, ...userData });
           } else {
             setUser(currentUser); // fallback jeśli brak danych w bazie
+            setIsDarkTheme(true);
           }
         } catch (err) {
           console.error("Błąd pobierania danych użytkownika:", err);
           setUser(currentUser);
+          setIsDarkTheme(true);
         }
       } else {
         setUser(null);
+        setIsDarkTheme(true);
       }
       setLoading(false);
     });
@@ -118,9 +124,11 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 font-sans pb-24">
+    <div className={`min-h-screen font-sans pb-24 transition-colors ${isDarkTheme ? 'bg-gray-900 text-gray-100' : 'bg-gray-200 text-gray-900'}`}>
 
-      <Header userName={user?.userName || user?.displayName || "Użytkownikowi"} />
+      <Header userName={user?.userName || user?.displayName || "Użytkownikowi"} 
+      isDarkTheme={isDarkTheme}
+      />
 
       <main className="px-4 space-y-6">
 
@@ -130,14 +138,19 @@ function App() {
               total={totals.balance.toFixed(2)}
               income={totals.income.toFixed(2)}
               expenses={totals.expenses.toFixed(2)}
+              isDarkTheme={isDarkTheme}
             />
-            <TransactionList onShowHistory={() => setActiveTab('history')} />
+            <TransactionList onShowHistory={() => setActiveTab('history')}
+             isDarkTheme={isDarkTheme}
+            />
           </>
         )}
 
         {/* Placeholder na przyszłe widoki */}
         {activeTab === 'analytics' && (
-          <AnalyticsPage />
+          <AnalyticsPage
+            isDarkTheme={isDarkTheme}
+          />
         )}
         {activeTab === 'calendar' && (
           <div className="text-center py-20 text-gray-500">
@@ -150,6 +163,7 @@ function App() {
                   setHistoryTargetTransactionId(transactionId);
                 }, 0);
               }}
+              isDarkTheme={isDarkTheme}
             />
           </div>
         )}
@@ -160,20 +174,27 @@ function App() {
             <p>Lista wszystkich transakcji.</p>
             <TransactionHistory
               scrollToTransactionId={historyTargetTransactionId}
+              isDarkTheme={isDarkTheme}
             />
           </div>
         )}
 
         {activeTab === 'profile' && (
           <div className="text-center py-20 text-gray-500">
-            <Sett />
+            <Sett
+              isDarkTheme={isDarkTheme}
+              setIsDarkTheme={setIsDarkTheme}
+              userId={user?.uid}
+            />
           </div>
         )}
 
 
       </main>
 
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNav activeTab={activeTab} 
+      onTabChange={setActiveTab}
+      isDarkTheme={isDarkTheme} />
     </div>
   );
 }

@@ -13,7 +13,7 @@ import TransactionDetailsModal from "./TransactionDetailsModal.jsx";
 // Components moved to their own files
 
 
-export default function TransactionList({onShowHistory}) {
+export default function TransactionList({onShowHistory, isDarkTheme}) {
   const [isFormVisible, setIsFormVisible] = useState(false); // Do widoczności formularza
   const [selectedTransaction, setSelectedTransaction] = useState(null); // Do podglądu szczegółów
   const [editingTransaction, setEditingTransaction] = useState(null); // Do edycji
@@ -82,7 +82,7 @@ export default function TransactionList({onShowHistory}) {
   return (
     <div className="pb-8">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-lg text-gray-200">Ostatnie transakcje</h3>
+        <h3 className={`font-semibold text-lg ${isDarkTheme ? 'text-gray-200' : 'text-gray-800'}`}>Ostatnie transakcje</h3>
         <button 
           onClick={() => {
             setEditingTransaction(null);
@@ -98,7 +98,7 @@ export default function TransactionList({onShowHistory}) {
       {/* Modal Formularza (Dodawanie / Edycja) */}
       {isFormVisible && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-700 p-6 rounded-2xl shadow-2xl w-full max-w-3xl relative animate-in fade-in zoom-in duration-200">
+          <div className={`p-6 rounded-2xl shadow-2xl w-full max-w-3xl relative animate-in fade-in zoom-in duration-200 border ${isDarkTheme ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-300'}`}>
             <button 
               onClick={() => {
                 setIsFormVisible(false);
@@ -106,7 +106,7 @@ export default function TransactionList({onShowHistory}) {
                 setEditingTransaction(null);
                 
               }} 
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+              className={`absolute top-4 right-4 transition-colors ${isDarkTheme ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}
             >
               ✕
             </button>
@@ -116,6 +116,7 @@ export default function TransactionList({onShowHistory}) {
               onCloseForm={handleTransactionAdded}
               initialData={editingTransaction || repeatTransaction}
               isEditing={!!editingTransaction}
+              isDarkTheme={isDarkTheme}
             />
           </div>
         </div>
@@ -129,6 +130,7 @@ export default function TransactionList({onShowHistory}) {
            onEdit={handleEditClick}
            onDelete={handleDeleteClick}
             onRepeat={handleRepeatClick}
+            isDarkTheme={isDarkTheme}
         />
       )}
 
@@ -141,18 +143,19 @@ export default function TransactionList({onShowHistory}) {
               amount={transaction.amount} 
               type={transaction.type}
               date={transaction.date}
+              isDarkTheme={isDarkTheme}
               onClick={() => setSelectedTransaction(transaction)}
             />
           ))
         ) : (
-          <div className="text-center py-8 text-gray-500 bg-gray-800/30 rounded-xl border border-dashed border-gray-700">
+          <div className={`text-center py-8 rounded-xl border border-dashed ${isDarkTheme ? 'text-gray-500 bg-gray-800/30 border-gray-700' : 'text-gray-600 bg-gray-100 border-gray-300'}`}>
             <p>Brak transakcji.</p>
             <p className="text-xs mt-1">Dodaj pierwszy wydatek lub przychód!</p>
           </div>
         )}
       </div>
 
-      <div className="mt-4 text-right text-sm text-gray-400">
+      <div className={`mt-4 text-right text-sm ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>
         {transactions.length > 5 && (
             <button
               type="button"

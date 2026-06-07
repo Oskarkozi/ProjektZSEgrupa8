@@ -1,23 +1,23 @@
 // Modal wyświetlający szczegóły transakcji
-export default function TransactionDetailsModal({ transaction, onClose, onEdit, onDelete,onRepeat }) {
+export default function TransactionDetailsModal({ transaction, onClose, onEdit, onDelete,onRepeat, isDarkTheme = true }) {
     if (!transaction) return null;
   
     return (
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={onClose}>
         <div 
-          className="bg-gray-900 border border-gray-700 p-6 rounded-2xl shadow-2xl w-full max-w-md relative animate-in fade-in zoom-in duration-200"
+          className={`p-6 rounded-2xl shadow-2xl w-full max-w-md relative animate-in fade-in zoom-in duration-200 border ${isDarkTheme ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-300'}`}
           onClick={e => e.stopPropagation()}
         >
-          <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">✕</button>
+          <button onClick={onClose} className={`absolute top-4 right-4 transition-colors ${isDarkTheme ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`}>✕</button>
           
           <div className="mb-6">
-            <h3 className="text-2xl font-bold text-gray-100 mb-1">{transaction.category}</h3>
-            <p className="text-gray-400 text-sm">{transaction.date}</p>
+            <h3 className={`text-2xl font-bold mb-1 ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>{transaction.category}</h3>
+            <p className={`text-sm ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>{transaction.date}</p>
           </div>
   
           <div className="space-y-6">
-               <div className="bg-gray-800/50 p-4 rounded-xl border border-gray-700/50">
-                  <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Kwota</p>
+               <div className={`p-4 rounded-xl border ${isDarkTheme ? 'bg-gray-800/50 border-gray-700/50' : 'bg-gray-50 border-gray-200'}`}>
+                  <p className={`text-xs uppercase tracking-wider mb-1 ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>Kwota</p>
                   <p className={`text-3xl font-bold ${transaction.type === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
                      {transaction.type === 'income' ? '+' : '-'}${parseFloat(transaction.amount).toFixed(2)}
                   </p>
@@ -25,8 +25,8 @@ export default function TransactionDetailsModal({ transaction, onClose, onEdit, 
   
                {transaction.description && (
                  <div>
-                    <p className="text-gray-400 text-xs uppercase tracking-wider mb-2">Opis</p>
-                    <p className="text-gray-300 text-sm leading-relaxed bg-gray-800/30 p-3 rounded-lg border border-gray-700/30">
+                    <p className={`text-xs uppercase tracking-wider mb-2 ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>Opis</p>
+                    <p className={`text-sm leading-relaxed p-3 rounded-lg border ${isDarkTheme ? 'text-gray-300 bg-gray-800/30 border-gray-700/30' : 'text-gray-700 bg-gray-50 border-gray-200'}`}>
                       {transaction.description}
                     </p>
                  </div>

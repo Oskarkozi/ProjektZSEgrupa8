@@ -3,7 +3,7 @@ import { updateProfile } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { getUserProfile, updateUserProfile } from "../../services/transactionService";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
-export const ProfileTab = () => {
+export const ProfileTab = ({ isDarkTheme = true }) => {
   const [username, setUsername] = useState('');
   const [password, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -77,21 +77,21 @@ export const ProfileTab = () => {
   return (
   <form className="space-y-4" onSubmit={handleSubmit}>
     <h2 className="text-xl font-bold">Edytuj profil</h2>
-    <label className="block text-left text-gray-100">Hasło</label>
-    <input className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+    <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>Hasło</label>
+    <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
      placeholder="Nowe hasło"
      type="password"
      value={password}
      onChange={(e) => setNewPassword(e.target.value)} />
-    <label className="block text-left text-gray-100">Potwierdź hasło</label>
-    <input className={`w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${password && password !== confirmPassword ? 'border-red-500' : ''}`}
+    <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>Potwierdź hasło</label>
+    <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'} ${password && password !== confirmPassword ? 'border-red-500' : ''}`}
      placeholder="Potwierdź nowe hasło"
      type="password"
       value={confirmPassword}
       onChange={(e) => setConfirmPassword(e.target.value)} />
       {error && <div className="text-red-500 text-sm">{error}</div>}
-    <label className="block text-left text-gray-100">Nazwa użytkownika</label>
-    <input className="w-full p-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+    <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>Nazwa użytkownika</label>
+    <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
      placeholder="Nazwa użytkownika"
       type="text"
       value = {username}
