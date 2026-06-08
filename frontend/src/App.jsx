@@ -176,8 +176,7 @@ function App() {
 
               {activeTab === 'history' && (
                 <div className="text-center py-20 text-gray-500">
-                  <h2 className="text-xl font-bold mb-2">{text.fullHistory}</h2>
-                  <p>{text.historyList}</p>
+                  
                   <TransactionHistory
                     scrollToTransactionId={historyTargetTransactionId}
                     isDarkTheme={isDarkTheme}

@@ -98,6 +98,7 @@ export const translations = {
         fullHistory: 'Pełna Historia',
         historyList: 'Lista wszystkich transakcji.'
         ,
+        exportCSV: 'Eksport CSV',
         // Profile / settings
         editProfile: 'Edytuj profil',
         password: 'Hasło',
@@ -222,6 +223,7 @@ export const translations = {
         fullHistory: 'Full History',
         historyList: 'List of all transactions.'
         ,
+        exportCSV: 'Export CSV',
         // Profile / settings
         editProfile: 'Edit profile',
         password: 'Password',
