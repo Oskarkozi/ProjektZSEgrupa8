@@ -8,6 +8,5 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Pozwala na połączenia z każdego adresu (IPv4 i IPv6)
     port: 5173,
-    strictPort: true, // Nie zmieniaj portu, jeśli 5173 jest zajęty
   }
 })
