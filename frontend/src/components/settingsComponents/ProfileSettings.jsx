@@ -3,7 +3,9 @@ import { updateProfile } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { getUserProfile, updateUserProfile } from "../../services/transactionService";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
+import { useT } from '../../i18n';
 export const ProfileTab = ({ isDarkTheme = true }) => {
+  const t = useT();
   const [username, setUsername] = useState('');
   const [password, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,11 +19,11 @@ export const ProfileTab = ({ isDarkTheme = true }) => {
     setSuccess('');
 
     if (password !== confirmPassword) {
-      setError('Hasła nie są identyczne');
+      setError(t('passwordsMismatch') || 'Hasła nie są identyczne');
       return;
     }
     if (password && password.length < 6) {
-      setError('Hasło musi mieć co najmniej 6 znaków');
+      setError(t('passwordTooShort') || 'Hasło musi mieć co najmniej 6 znaków');
       return;
     }
 
@@ -41,12 +43,12 @@ export const ProfileTab = ({ isDarkTheme = true }) => {
       if (password) {
         try {
           // Reauthenticate first (Firebase requirement)
-          const currentPassword = prompt('Enter current password to confirm password change:');
+          const currentPassword = prompt(t('enterCurrentPasswordPrompt'));
           if (!currentPassword) return; // user cancelled
-          
+
           const cred = EmailAuthProvider.credential(user.email, currentPassword);
           await reauthenticateWithCredential(user, cred);
-          
+
           // Now update the password
           await updatePassword(user, password);
         } catch (err) {
@@ -54,13 +56,13 @@ export const ProfileTab = ({ isDarkTheme = true }) => {
         }
       }
 
-      setSuccess('Zapisano pomyślnie!');
+      setSuccess(t('savedSuccess'));
     } catch (err) {
-      setError(err.message || 'Wystąpił błąd podczas zapisu');
+      setError(err.message || t('saveError') || 'Wystąpił błąd podczas zapisu');
     } finally {
       setSaving(false);
     }
-  }; 
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -75,32 +77,32 @@ export const ProfileTab = ({ isDarkTheme = true }) => {
     fetchUser();
   }, []);
   return (
-  <form className="space-y-4" onSubmit={handleSubmit}>
-    <h2 className="text-xl font-bold">Edytuj profil</h2>
-    <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>Hasło</label>
-    <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
-     placeholder="Nowe hasło"
-     type="password"
-     value={password}
-     onChange={(e) => setNewPassword(e.target.value)} />
-    <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>Potwierdź hasło</label>
-    <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'} ${password && password !== confirmPassword ? 'border-red-500' : ''}`}
-     placeholder="Potwierdź nowe hasło"
-     type="password"
-      value={confirmPassword}
-      onChange={(e) => setConfirmPassword(e.target.value)} />
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <h2 className="text-xl font-bold">{t('editProfile')}</h2>
+      <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>{t('password')}</label>
+      <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+        placeholder={t('password')}
+        type="password"
+        value={password}
+        onChange={(e) => setNewPassword(e.target.value)} />
+      <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>{t('confirmPassword')}</label>
+      <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'} ${password && password !== confirmPassword ? 'border-red-500' : ''}`}
+        placeholder={t('confirmPassword')}
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)} />
       {error && <div className="text-red-500 text-sm">{error}</div>}
-    <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>Nazwa użytkownika</label>
-    <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
-     placeholder="Nazwa użytkownika"
-      type="text"
-      value = {username}
-      onChange={(e) => setUsername(e.target.value)} />
+      <label className={`block text-left ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>{t('usernameLabel')}</label>
+      <input className={`w-full p-2.5 border rounded-lg placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-900/50 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}
+        placeholder={t('usernameLabel')}
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)} />
       {success && <div className="text-emerald-400 text-sm">{success}</div>}
       {error && <div className="text-red-500 text-sm">{error}</div>}
       <button disabled={saving} type="submit" className="bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-lg transition-colors">
-        {saving ? 'Zapisywanie...' : 'Zapisz zmiany'}
+        {saving ? t('saving') : t('saveChanges')}
       </button>
-  </form>
-);
+    </form>
+  );
 };

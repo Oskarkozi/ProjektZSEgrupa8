@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
+import { useT } from './i18n';
 
 
 function Login() {
 
     const [isLogin, setIsLogin] = useState(true);
+    const t = useT();
 
 
     const toggleForm = () => {
@@ -26,8 +28,8 @@ function Login() {
                         </h1>
                         <p className="text-gray-400 text-sm">
                             {isLogin
-                                ? "Welcome back. Let's check your finances."
-                                : "Zacznij kontrolować swoje finanse."}
+                                ? t('welcomeBack')
+                                : t('startControl')}
                         </p>
                     </div>
 
@@ -40,7 +42,7 @@ function Login() {
                                 : 'text-gray-400 hover:text-white'
                                 }`}
                         >
-                            Sign In
+                            {t('signin')}
                         </button>
                         <button
                             onClick={() => setIsLogin(false)}
@@ -49,7 +51,7 @@ function Login() {
                                 : 'text-gray-400 hover:text-white'
                                 }`}
                         >
-                            Register
+                            {t('register')}
                         </button>
                     </div>
 
@@ -62,13 +64,13 @@ function Login() {
 
 
                     <p className="text-xs text-gray-500 text-center mt-6">
-                        By continuing, you agree to BankX's{' '}
+                        {t('termsIntro')} BankX's{' '}
                         <a href="#" className="text-teal-400 hover:text-teal-300">
-                            Terms of Service
+                            {t('terms')}
                         </a>{' '}
-                        and{' '}
+                        {t('and')}{' '}
                         <a href="#" className="text-teal-400 hover:text-teal-300">
-                            Privacy Policy
+                            {t('privacy')}
                         </a>
                         .
                     </p>
@@ -87,10 +89,10 @@ function Login() {
 
                 <div className="relative z-10 text-center max-w-lg">
                     <h2 className="text-4xl font-bold text-white mb-4">
-                        Take control of your <span className="text-teal-400">finances</span>.
+                        {t('heroTitle')}
                     </h2>
                     <p className="text-gray-300 text-lg">
-                        Track spending, set budgets, and grow your wealth — all in one place.
+                        {t('heroText')}
                     </p>
 
 
