@@ -2,6 +2,7 @@ import { getCategoryLabel, getCategoryColor, categories as allCategories } from 
 import { useT } from '../i18n';
 
 // Komponent wyświetlający pojedynczą pozycję na liście
+// Komponent pojedynczej pozycji transakcji wyświetlany na liście.
 export default function TransactionItem({ category, amount, type, date, onClick, isPlanned = false, isDarkTheme = true }) {
   const t = useT();
   // Wykorzystujemy funkcje pomocnicze, które szukają w obu grupach (income i expense)

@@ -1,6 +1,7 @@
 import { useT } from '../i18n';
 import { getCategoryLabel } from '../utils/categories';
 
+// Modal pokazujący szczegóły pojedynczej transakcji oraz dostępne akcje.
 export default function TransactionDetailsModal({ transaction, onClose, onEdit, onDelete, onRepeat, isDarkTheme = true }) {
   if (!transaction) return null;
   const t = useT();

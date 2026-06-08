@@ -26,6 +26,7 @@ const timePeriods = [
 	{ id: 'all', label: 'allTime' },
 ];
 
+// Zwraca obiekt z datą początkową i końcową dla wybranego okresu.
 function getDateRangeFilter(periodId) {
 	const now = new Date();
 	let startDate = new Date();
@@ -54,6 +55,7 @@ function getDateRangeFilter(periodId) {
 	};
 }
 
+// Zwraca zakres dat odpowiadający poprzedniemu okresowi porównawczemu.
 function getPreviousPeriodDateRange(periodId) {
 	const now = new Date();
 	let currentStart = new Date();
@@ -91,6 +93,7 @@ function getPreviousPeriodDateRange(periodId) {
 	};
 }
 
+// Przygotowuje dane dla wykresu kołowego na podstawie transakcji i wybranego filtra.
 function getPieChartDataFromTransactions(transactions, selectedCategory, timePeriod, t) {
 	const { start, end } = getDateRangeFilter(timePeriod);
 
@@ -158,6 +161,7 @@ function getPieChartDataFromTransactions(transactions, selectedCategory, timePer
 	}
 }
 
+// Zwraca tytuł kategorii — próbuje użyć tłumaczenia, potem fallback do label z util.
 function getCategoryTitle(categoryId, t) {
 	if (categoryId === 'all') {
 		return t('all');
@@ -171,6 +175,7 @@ function getCategoryTitle(categoryId, t) {
 	return getCategoryLabel(categoryId, t);
 }
 
+// Główny komponent strony statystyk i wykresów.
 export default function AnalyticsPage({ isDarkTheme = true }) {
 	const [selectedCategory, setSelectedCategory] = useState('all');
 	const [selectedTimePeriod, setSelectedTimePeriod] = useState('month');

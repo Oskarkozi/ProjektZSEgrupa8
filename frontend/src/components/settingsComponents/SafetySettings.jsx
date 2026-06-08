@@ -1,3 +1,4 @@
+// Zakładka bezpieczeństwa — miejsce na ustawienia 2FA i inne opcje bezpieczeństwa.
 export const SafetyTab = ({ isDarkTheme = true }) => (
     <div className="space-y-4">
         <h2 className="text-xl font-bold">dodaj 2factor authentication</h2>

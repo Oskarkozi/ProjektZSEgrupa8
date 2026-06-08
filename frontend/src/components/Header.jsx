@@ -1,5 +1,6 @@
 import { useT } from '../i18n';
 
+// Nagłówek aplikacji — pokazuje powitanie i nazwę użytkownika.
 export default function Header({ userName, isDarkTheme }) {
   const t = useT();
 

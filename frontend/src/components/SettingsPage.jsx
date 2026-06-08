@@ -9,6 +9,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../services/firebase';
 import { useT } from '../i18n';
 
+// Strona ustawień — wybiera i renderuje odpowiednią zakładkę ustawień.
 export default function Settings({ isDarkTheme, setIsDarkTheme, userId }) {
     const [activeTab, setActiveTab] = useState('profile');
     const t = useT();

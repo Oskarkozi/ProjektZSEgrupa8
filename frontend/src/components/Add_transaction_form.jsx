@@ -3,6 +3,8 @@ import { categories, getCategoryLabel } from '../utils/categories';
 import { set } from 'firebase/database';
 import { useT } from '../i18n';
 
+// Formularz do tworzenia i edycji transakcji.
+// Waliduje dane i wywołuje przekazane funkcje zapisu/zamknięcia.
 export default function TransactionForm({ userId, onSaveTransaction, onCloseForm, initialData = null, isEditing = false, isDarkTheme = true }) {
   const t = useT();
   const [selectedType, setSelectedType] = useState(initialData?.type || 'income');

@@ -14,6 +14,7 @@ import TransactionDetailsModal from "./TransactionDetailsModal.jsx";
 // Components moved to their own files
 
 
+// Lista ostatnich transakcji z możliwością dodawania, edycji i podglądu szczegółów.
 export default function TransactionList({ onShowHistory, isDarkTheme }) {
   const t = useT();
   const [isFormVisible, setIsFormVisible] = useState(false); // Do widoczności formularza

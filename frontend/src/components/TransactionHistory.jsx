@@ -15,6 +15,7 @@ import TransactionDetailsModal from "./TransactionDetailsModal.jsx";
 // Components moved to their own files
 
 
+// Widok pełnej historii transakcji z filtrami i paginacją.
 export default function TransactionHistory({ scrollToTransactionId = null, isDarkTheme = true }) {
   const t = useT();
   const [isFormVisible, setIsFormVisible] = useState(false); // Do widoczności formularza

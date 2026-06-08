@@ -4,6 +4,7 @@ import { realtimeDB } from '../../services/firebase';
 import { useLanguage } from '../../LanguageContext';
 import { useT } from '../../i18n';
 
+// Zakładka ustawień języka i motywu aplikacji.
 export const LanguageTab = ({ isDarkTheme, setIsDarkTheme, userId }) => {
   const [loading, setLoading] = useState(false);
   const { language, setLanguage } = useLanguage();

@@ -1,5 +1,6 @@
 import { useT } from '../i18n';
 
+// Kafelek pokazujący bilans — saldo oraz sumy przychodów i wydatków.
 export default function BalanceCard({ total, income, expenses, isDarkTheme }) {
   const t = useT();
 

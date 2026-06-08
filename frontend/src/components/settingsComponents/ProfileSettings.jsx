@@ -4,6 +4,7 @@ import { auth } from "../../services/firebase";
 import { getUserProfile, updateUserProfile } from "../../services/transactionService";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "firebase/auth";
 import { useT } from '../../i18n';
+// Zakładka profilu — edycja nazwy użytkownika i zmiana hasła.
 export const ProfileTab = ({ isDarkTheme = true }) => {
   const t = useT();
   const [username, setUsername] = useState('');

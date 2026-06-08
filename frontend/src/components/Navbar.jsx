@@ -5,6 +5,7 @@ export default function Navbar({ activeTab, onTabChange, isDarkTheme }) {
   const t = useT();
 
   const NavButton = ({ id, label, icon: Icon }) => {
+    // Pojedynczy przycisk nawigacyjny używany w dolnym pasku.
     const isActive = activeTab === id;
 
     return (
@@ -22,8 +23,8 @@ export default function Navbar({ activeTab, onTabChange, isDarkTheme }) {
   return (
     <nav
       className={`fixed bottom-0 left-0 right-0 ${isDarkTheme
-          ? 'bg-gray-900/90 backdrop-blur-md border-t border-gray-800 text-gray-100'
-          : 'bg-gray-200/90 backdrop-blur-md border-t border-gray-300 text-gray-900'
+        ? 'bg-gray-900/90 backdrop-blur-md border-t border-gray-800 text-gray-100'
+        : 'bg-gray-200/90 backdrop-blur-md border-t border-gray-300 text-gray-900'
         } px-6 py-4 pb-6`}
     >
       <div className="flex justify-between items-center max-w-md mx-auto">

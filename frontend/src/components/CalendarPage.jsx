@@ -9,6 +9,7 @@ import { useT } from '../i18n';
 const MONTH_KEYS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const WEEKDAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
+// Pojedynczy kwadrat dnia w kalendarzu z ewentualnymi markerami.
 function DayTile({ dayNumber, className = "", markers = [], onClick, isDarkTheme = true }) {
     return (
         <button
@@ -33,6 +34,7 @@ function DayTile({ dayNumber, className = "", markers = [], onClick, isDarkTheme
     );
 }
 
+// Modal pokazujący transakcje dla wybranego dnia oraz akcje (dodaj/otwórz w historii).
 function DayTransactionsModal({ day, monthIndex, monthName, transactions, onClose, onAddTransaction, onOpenTransactionInHistory, isDarkTheme = true, t }) {
     if (!day) return null;
 
@@ -113,10 +115,12 @@ function DayTransactionsModal({ day, monthIndex, monthName, transactions, onClos
     );
 }
 
+// Zwraca liczbę dni w danym miesiącu.
 function getDaysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
 }
 
+// Strona kalendarza — pokazuje dni z markerami transakcji i umożliwia dodanie transakcji.
 export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme = true }) {
     const t = useT();
     const today = new Date();
