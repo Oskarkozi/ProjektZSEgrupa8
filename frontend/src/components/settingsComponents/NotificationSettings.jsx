@@ -1,3 +1,4 @@
+// Ustawienia powiadomień — włącz/wyłącz typy powiadomień.
 export const NotificationsTab = ({ isDarkTheme = true }) => (
   <div className="space-y-4">
     <h2 className="text-xl font-bold">Edytuj powiadomienia</h2>

@@ -5,8 +5,8 @@ import { FaRegEnvelope } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 
 
+// Formularz logowania — obsługuje stan formularza i logikę uwierzytelniania użytkownika.
 function LoginForm() {
-
     const [formData, setFormData] = useState({
         email: '',
         password: ''

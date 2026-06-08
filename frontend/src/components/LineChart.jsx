@@ -18,6 +18,7 @@ const demoData = [
 	{ name: 'Cze', income: 1700, expenses: 1150 },
 ];
 
+// Prosty wykres słupkowy używany jako demo przychodów i wydatków.
 export default function LineChart() {
 	return (
 		<div className="mt-4 h-90 w-full rounded-2xl border border-gray-700 bg-gray-800/80 p-4 shadow-lg">

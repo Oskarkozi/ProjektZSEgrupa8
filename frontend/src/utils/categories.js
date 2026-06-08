@@ -1,12 +1,12 @@
-export const categories ={
-  income:{
+export const categories = {
+  income: {
     salary: { id: 'salary', label: 'Wynagrodzenie', color: '#10B981' },
     freelance: { id: 'freelance', label: 'Zlecenia', color: '#3B82F6' },
     investments: { id: 'investments', label: 'Inwestycje', color: '#8B5CF6' },
     gifts: { id: 'gifts', label: 'Prezenty', color: '#F59E0B' },
     other_income: { id: 'other_income', label: 'Inne', color: '#6B7280' }
   },
-  expense:{
+  expense: {
     food: { id: 'food', label: 'Jedzenie', color: '#EF4444' },
     transport: { id: 'transport', label: 'Transport', color: '#3B82F6' },
     entertainment: { id: 'entertainment', label: 'Rozrywka', color: '#8B5CF6' },
@@ -17,11 +17,21 @@ export const categories ={
     other_expense: { id: 'other_expense', label: 'Inne', color: '#6B7280' }
   }
 }
-export const getCategoryLabel=(id) =>{
-    const allCategories = {...categories.income, ...categories.expense};
-    return allCategories[id] ? allCategories[id].label : id;
+export const getCategoryLabel = (id, t) => {
+  const allCategories = { ...categories.income, ...categories.expense };
+  if (t) {
+    try {
+      const translated = t(`categories.${id}`);
+      // if translation returns the key itself and there is a fallback label, use it
+      if (translated && translated !== `categories.${id}`) return translated;
+    } catch (e) {
+      // ignore and fallback
+    }
+  }
+
+  return allCategories[id] ? allCategories[id].label : id;
 };
 export const getCategoryColor = (id) => {
-    const allCategories = {...categories.income, ...categories.expense};
-    return allCategories[id] ? allCategories[id].color : '#9CA3AF';
+  const allCategories = { ...categories.income, ...categories.expense };
+  return allCategories[id] ? allCategories[id].color : '#9CA3AF';
 };

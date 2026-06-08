@@ -1,15 +1,18 @@
 import { FaHome, FaChartPie, FaList, FaUser, FaCalendar } from 'react-icons/fa';
+import { useT } from '../i18n';
 
 export default function Navbar({ activeTab, onTabChange, isDarkTheme }) {
+  const t = useT();
+
   const NavButton = ({ id, label, icon: Icon }) => {
+    // Pojedynczy przycisk nawigacyjny używany w dolnym pasku.
     const isActive = activeTab === id;
 
     return (
       <button
         onClick={() => onTabChange(id)}
-        className={`flex flex-col items-center gap-1 transition-colors duration-200 ${
-          isActive ? 'text-emerald-400' : 'text-gray-500 hover:text-gray-300'
-        }`}
+        className={`flex flex-col items-center gap-1 transition-colors duration-200 ${isActive ? 'text-emerald-400' : 'text-gray-500 hover:text-gray-300'
+          }`}
       >
         <Icon className={`text-xl ${isActive ? 'scale-110' : ''} transition-transform`} />
         <span className="text-[10px] font-medium">{label}</span>
@@ -19,18 +22,17 @@ export default function Navbar({ activeTab, onTabChange, isDarkTheme }) {
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 ${
-        isDarkTheme
-          ? 'bg-gray-900/90 backdrop-blur-md border-t border-gray-800 text-gray-100'
-          : 'bg-gray-200/90 backdrop-blur-md border-t border-gray-300 text-gray-900'
-      } px-6 py-4 pb-6`}
+      className={`fixed bottom-0 left-0 right-0 ${isDarkTheme
+        ? 'bg-gray-900/90 backdrop-blur-md border-t border-gray-800 text-gray-100'
+        : 'bg-gray-200/90 backdrop-blur-md border-t border-gray-300 text-gray-900'
+        } px-6 py-4 pb-6`}
     >
       <div className="flex justify-between items-center max-w-md mx-auto">
-        <NavButton id="home" label="Pulpit" icon={FaHome} />
-        <NavButton id="analytics" label="Statystyki" icon={FaChartPie} />
-        <NavButton id="calendar" label="Kalendarz" icon={FaCalendar} />
-        <NavButton id="history" label="Historia" icon={FaList} />
-        <NavButton id="profile" label="Profil" icon={FaUser} />
+        <NavButton id="home" label={t('home')} icon={FaHome} />
+        <NavButton id="analytics" label={t('analytics')} icon={FaChartPie} />
+        <NavButton id="calendar" label={t('calendar')} icon={FaCalendar} />
+        <NavButton id="history" label={t('history')} icon={FaList} />
+        <NavButton id="profile" label={t('profile')} icon={FaUser} />
       </div>
     </nav>
   );

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { ref, onValue } from "firebase/database";
 import { auth, database } from "../services/firebase";
-import { categories } from "../utils/categories.js";
+import { categories, getCategoryLabel } from "../utils/categories.js";
 import { writeUserData, updateUserData, removeUserData, isTransactionPlanned } from "../services/transactionService";
+import { useT } from '../i18n';
 
 import Form from "./Add_transaction_form.jsx";
 import TransactionItem from "./TransactionItem.jsx";
@@ -14,7 +15,9 @@ import TransactionDetailsModal from "./TransactionDetailsModal.jsx";
 // Components moved to their own files
 
 
+// Widok pełnej historii transakcji z filtrami i paginacją.
 export default function TransactionHistory({ scrollToTransactionId = null, isDarkTheme = true }) {
+  const t = useT();
   const [isFormVisible, setIsFormVisible] = useState(false); // Do widoczności formularza
   const [selectedTransaction, setSelectedTransaction] = useState(null); // Do podglądu szczegółów
   const [editingTransaction, setEditingTransaction] = useState(null); // Do edycji
@@ -95,7 +98,7 @@ export default function TransactionHistory({ scrollToTransactionId = null, isDar
   };
 
   const handleDeleteClick = (transaction) => {
-    if (window.confirm("Czy na pewno chcesz usunąć tę transakcję?")) {
+    if (window.confirm(t('deleteConfirm'))) {
       removeUserData(currentUserId, transaction.id);
       setSelectedTransaction(null);
     }
@@ -182,7 +185,7 @@ export default function TransactionHistory({ scrollToTransactionId = null, isDar
       <div className="flex justify-between items-center mb-4 gap-4 flex-wrap">
         {/* Filtr po typie transakcji */}
         <div className="flex flex-col">
-          <label className={`text-sm mb-2 ${isDarkTheme ? 'text-gray-400' : 'text-gray-700'}`}>Typ:</label>
+          <label className={`text-sm mb-2 ${isDarkTheme ? 'text-gray-400' : 'text-gray-700'}`}>{t('categoryLabel') || 'Typ:'}</label>
           <select
             value={filterType}
             onChange={(e) => {
@@ -191,15 +194,15 @@ export default function TransactionHistory({ scrollToTransactionId = null, isDar
             }}
             className={`px-3 py-2 border rounded-lg focus:outline-none focus:border-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-800 border-gray-700 text-white hover:border-gray-600' : 'bg-white border-gray-300 text-gray-900 hover:border-gray-400'}`}
           >
-            <option value="all">Wszystko</option>
-            <option value="expense">Wydatki</option>
-            <option value="income">Dochody</option>
+            <option value="all">{t('all')}</option>
+            <option value="expense">{t('expenses')}</option>
+            <option value="income">{t('income')}</option>
           </select>
         </div>
 
         {/* Filtr po kategorii */}
         <div className="flex flex-col">
-          <label className={`text-sm mb-2 ${isDarkTheme ? 'text-gray-400' : 'text-gray-700'}`}>Kategoria:</label>
+          <label className={`text-sm mb-2 ${isDarkTheme ? 'text-gray-400' : 'text-gray-700'}`}>{t('categoryLabel')}</label>
           <select
             value={filterCategory}
             onChange={(e) => {
@@ -208,27 +211,27 @@ export default function TransactionHistory({ scrollToTransactionId = null, isDar
             }}
             className={`px-3 py-2 border rounded-lg focus:outline-none focus:border-emerald-500 transition-colors ${isDarkTheme ? 'bg-gray-800 border-gray-700 text-white hover:border-gray-600' : 'bg-white border-gray-300 text-gray-900 hover:border-gray-400'}`}
           >
-            <option value="all">Wszystko</option>
+            <option value="all">{t('all')}</option>
             {filterType !== "all" && filterType === "income" && (
               Object.values(categories.income).map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.label}</option>
+                <option key={cat.id} value={cat.id}>{getCategoryLabel(cat.id, t)}</option>
               ))
             )}
             {filterType !== "all" && filterType === "expense" && (
               Object.values(categories.expense).map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.label}</option>
+                <option key={cat.id} value={cat.id}>{getCategoryLabel(cat.id, t)}</option>
               ))
             )}
             {filterType === "all" && (
               <>
-                <optgroup label="Dochody">
+                <optgroup label={t('income')}>
                   {Object.values(categories.income).map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+                    <option key={cat.id} value={cat.id}>{getCategoryLabel(cat.id, t)}</option>
                   ))}
                 </optgroup>
-                <optgroup label="Wydatki">
+                <optgroup label={t('expenses')}>
                   {Object.values(categories.expense).map((cat) => (
-                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+                    <option key={cat.id} value={cat.id}>{getCategoryLabel(cat.id, t)}</option>
                   ))}
                 </optgroup>
               </>
@@ -301,8 +304,8 @@ export default function TransactionHistory({ scrollToTransactionId = null, isDar
             </div>))
         ) : (
           <div className={`text-center py-8 rounded-xl border border-dashed ${isDarkTheme ? 'text-gray-500 bg-gray-800/30 border-gray-700' : 'text-gray-600 bg-gray-100 border-gray-300'}`}>
-            <p>Brak transakcji.</p>
-            <p className="text-xs mt-1">Dodaj pierwszy wydatek lub przychód!</p>
+            <p>{t('noTransactions')}</p>
+            <p className="text-xs mt-1">{t('addFirstTransaction')}</p>
           </div>
         )}
       </div>

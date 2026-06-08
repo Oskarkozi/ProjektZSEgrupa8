@@ -4,22 +4,12 @@ import { auth, database } from "../services/firebase";
 import Form from "./Add_transaction_form.jsx";
 import { writeUserData } from "../services/transactionService";
 import { getCategoryColor, getCategoryLabel } from "../utils/categories";
+import { useT } from '../i18n';
 
-const MONTHS = [
-    "Styczeń",
-    "Luty",
-    "Marzec",
-    "Kwiecień",
-    "Maj",
-    "Czerwiec",
-    "Lipiec",
-    "Sierpień",
-    "Wrzesień",
-    "Październik",
-    "Listopad",
-    "Grudzień",
-];
+const MONTH_KEYS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+const WEEKDAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
+// Pojedynczy kwadrat dnia w kalendarzu z ewentualnymi markerami.
 function DayTile({ dayNumber, className = "", markers = [], onClick, isDarkTheme = true }) {
     return (
         <button
@@ -44,7 +34,8 @@ function DayTile({ dayNumber, className = "", markers = [], onClick, isDarkTheme
     );
 }
 
-function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTransaction, onOpenTransactionInHistory, isDarkTheme = true }) {
+// Modal pokazujący transakcje dla wybranego dnia oraz akcje (dodaj/otwórz w historii).
+function DayTransactionsModal({ day, monthIndex, monthName, transactions, onClose, onAddTransaction, onOpenTransactionInHistory, isDarkTheme = true, t }) {
     if (!day) return null;
 
     return (
@@ -56,9 +47,9 @@ function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTra
                 <div className="mb-4 flex items-start justify-between gap-4">
                     <div>
                         <h2 className={`text-xl font-bold ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>
-                            Transakcje z dnia {day} {MONTHS[monthIndex]}
+                            {t('transactionDetailsDate')} {day} {monthName}
                         </h2>
-                        <p className={`text-sm ${isDarkTheme ? 'text-slate-400' : 'text-gray-600'}`}>Kliknij transakcję, aby przejść do historii.</p>
+                        <p className={`text-sm ${isDarkTheme ? 'text-slate-400' : 'text-gray-600'}`}>{t('clickTransactionHistory')}</p>
                     </div>
                     <button
                         type="button"
@@ -72,7 +63,7 @@ function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTra
                 <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
                     {transactions.length > 0 ? (
                         transactions.map((transaction) => {
-                            const label = getCategoryLabel(transaction.category);
+                            const label = getCategoryLabel(transaction.category, t);
                             const color = getCategoryColor(transaction.category);
 
                             return (
@@ -90,7 +81,7 @@ function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTra
                                         <div className="flex flex-col">
                                             <span className={`font-medium ${isDarkTheme ? 'text-white' : 'text-gray-900'}`}>{label}</span>
                                             <span className={`text-xs ${isDarkTheme ? 'text-slate-400' : 'text-gray-600'}`}>
-                                                {transaction.description || "Brak opisu"}
+                                                {transaction.description || t('noDescription')}
                                             </span>
                                         </div>
                                     </div>
@@ -105,18 +96,18 @@ function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTra
                         })
                     ) : (
                         <div>
-                        <div className={`rounded-xl border border-dashed p-4 text-sm ${isDarkTheme ? 'border-slate-700 bg-slate-900/40 text-slate-400' : 'border-gray-300 bg-gray-50 text-gray-600'}`}>
-                            Brak transakcji w tym dniu.
-                                                       
+                            <div className={`rounded-xl border border-dashed p-4 text-sm ${isDarkTheme ? 'border-slate-700 bg-slate-900/40 text-slate-400' : 'border-gray-300 bg-gray-50 text-gray-600'}`}>
+                                {t('noTransactionsDay')}
+
+                            </div>
+                            <button
+                                type="button"
+                                onClick={onAddTransaction}
+                                className="mt-3 inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+                            >
+                                {t('addTransaction')}
+                            </button>
                         </div>
-                         <button
-                                                                type="button"
-                                                                onClick={onAddTransaction}
-                                                                className="mt-3 inline-flex items-center rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
-                                                        >
-                                                                + Dodaj transakcję
-                                                        </button>
-                                                        </div>
                     )}
                 </div>
             </div>
@@ -124,11 +115,14 @@ function DayTransactionsModal({ day, monthIndex, transactions, onClose, onAddTra
     );
 }
 
+// Zwraca liczbę dni w danym miesiącu.
 function getDaysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
 }
 
+// Strona kalendarza — pokazuje dni z markerami transakcji i umożliwia dodanie transakcji.
 export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme = true }) {
+    const t = useT();
     const today = new Date();
     const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
     const [selectedYear, setSelectedYear] = useState(today.getFullYear());
@@ -204,7 +198,7 @@ export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme =
             accumulator[day].push({
                 id: transaction.id,
                 color: getCategoryColor(transaction.category),
-                label: getCategoryLabel(transaction.category),
+                label: getCategoryLabel(transaction.category, t),
             });
 
             return accumulator;
@@ -255,7 +249,7 @@ export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme =
     return (
         <section className={`w-full p-4 ${isDarkTheme ? 'text-gray-100' : 'text-gray-900'}`}>
             <div className="mb-4 flex flex-wrap items-center gap-2">
-                <h1 className="mr-4 text-2xl font-bold">Kalendarz</h1>
+                <h1 className="mr-4 text-2xl font-bold">{t('calendar')}</h1>
 
                 <select
                     name="month"
@@ -264,9 +258,9 @@ export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme =
                     onChange={(event) => setSelectedMonth(Number(event.target.value))}
                     className={`rounded-md border px-3 py-2 text-sm ${isDarkTheme ? 'border-slate-600 bg-slate-800' : 'border-gray-300 bg-white'}`}
                 >
-                    {MONTHS.map((monthName, monthIndex) => (
-                        <option key={monthName} value={monthIndex}>
-                            {monthName}
+                    {MONTH_KEYS.map((monthKey, monthIndex) => (
+                        <option key={monthKey} value={monthIndex}>
+                            {t(monthKey)}
                         </option>
                     ))}
                 </select>
@@ -286,13 +280,13 @@ export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme =
                 </select>
             </div>
             <div className="grid grid-cols-7 gap-2">
-                {["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Niedz"].map((day) => (
-                    <div key={day} className={`text-sm font-medium ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {day}
+                {WEEKDAY_KEYS.map((dayKey) => (
+                    <div key={dayKey} className={`text-sm font-medium ${isDarkTheme ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {t(dayKey)}
                     </div>
                 ))}
-            
-                </div>        
+
+            </div>
             <div className="grid grid-cols-7 gap-2">
                 {Array.from({ length: firstDayOfWeek }).map((_, i) => (
                     <DayTile
@@ -329,6 +323,7 @@ export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme =
             <DayTransactionsModal
                 day={selectedDay}
                 monthIndex={selectedMonth}
+                monthName={t(MONTH_KEYS[selectedMonth])}
                 transactions={transactionsBySelectedDay}
                 onClose={() => setSelectedDay(null)}
                 onAddTransaction={handleAddTransaction}
@@ -337,6 +332,7 @@ export default function CalendarPage({ onOpenTransactionInHistory, isDarkTheme =
                     onOpenTransactionInHistory?.(transactionId);
                 }}
                 isDarkTheme={isDarkTheme}
+                t={t}
             />
 
             {isFormVisible && (

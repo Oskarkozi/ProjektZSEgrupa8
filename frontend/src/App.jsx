@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
+import { LanguageProvider } from './LanguageContext';
+import { translations } from './i18n';
 import BalanceCard from './components/Balance';
 import AnalyticsPage from './components/AnalyticsPage';
 import TransactionList from './components/TransactionList';
@@ -21,8 +23,10 @@ function App() {
   const [activeTab, setActiveTab] = useState('home'); // Stan nawigacji
   const [historyTargetTransactionId, setHistoryTargetTransactionId] = useState(null);
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [language, setLanguage] = useState('pl');
 
   const [loading, setLoading] = useState(true);
+  const text = translations[language] || translations.pl;
 
 
   useEffect(() => {
@@ -38,6 +42,7 @@ function App() {
             const userData = snapshot.val();
             setUser({ ...currentUser, ...userData });
             setIsDarkTheme(userData.isDarkTheme ?? true);
+            setLanguage(userData.language ?? 'pl');
             console.log("Zaktualizowany user:", { ...currentUser, ...userData });
           } else {
             setUser(currentUser); // fallback jeśli brak danych w bazie
@@ -112,90 +117,93 @@ function App() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-xl text-gray-400">Ładowanie...</div>
+        <div className="text-xl text-gray-400">{text.loading}</div>
       </div>
     );
   }
 
 
-  if (!user) {
-    return <Login />;
-  }
-
-
   return (
-    <div className={`min-h-screen font-sans pb-24 transition-colors ${isDarkTheme ? 'bg-gray-900 text-gray-100' : 'bg-gray-200 text-gray-900'}`}>
+    <LanguageProvider initialLanguage={language}>
+      <div className={`min-h-screen font-sans pb-24 transition-colors ${isDarkTheme ? 'bg-gray-900 text-gray-100' : 'bg-gray-200 text-gray-900'}`}>
 
-      <Header userName={user?.userName || user?.displayName || "Użytkownikowi"} 
-      isDarkTheme={isDarkTheme}
-      />
-
-      <main className="px-4 space-y-6">
-
-        {activeTab === 'home' && (
+        {!user ? (
+          <Login />
+        ) : (
           <>
-            <BalanceCard
-              total={totals.balance.toFixed(2)}
-              income={totals.income.toFixed(2)}
-              expenses={totals.expenses.toFixed(2)}
+
+            <Header userName={user?.userName || user?.displayName || "Użytkownikowi"}
               isDarkTheme={isDarkTheme}
             />
-            <TransactionList onShowHistory={() => setActiveTab('history')}
-             isDarkTheme={isDarkTheme}
-            />
+
+            <main className="px-4 space-y-6">
+
+              {activeTab === 'home' && (
+                <>
+                  <BalanceCard
+                    total={totals.balance.toFixed(2)}
+                    income={totals.income.toFixed(2)}
+                    expenses={totals.expenses.toFixed(2)}
+                    isDarkTheme={isDarkTheme}
+                  />
+                  <TransactionList onShowHistory={() => setActiveTab('history')}
+                    isDarkTheme={isDarkTheme}
+                  />
+                </>
+              )}
+
+              {/* Placeholder na przyszłe widoki */}
+              {activeTab === 'analytics' && (
+                <AnalyticsPage
+                  isDarkTheme={isDarkTheme}
+                />
+              )}
+              {activeTab === 'calendar' && (
+                <div className="text-center py-20 text-gray-500">
+
+                  <CalendarPage
+                    onOpenTransactionInHistory={(transactionId) => {
+                      setActiveTab('history');
+                      setHistoryTargetTransactionId(null);
+                      window.setTimeout(() => {
+                        setHistoryTargetTransactionId(transactionId);
+                      }, 0);
+                    }}
+                    isDarkTheme={isDarkTheme}
+                  />
+                </div>
+              )}
+
+              {activeTab === 'history' && (
+                <div className="text-center py-20 text-gray-500">
+                  <h2 className="text-xl font-bold mb-2">{text.fullHistory}</h2>
+                  <p>{text.historyList}</p>
+                  <TransactionHistory
+                    scrollToTransactionId={historyTargetTransactionId}
+                    isDarkTheme={isDarkTheme}
+                  />
+                </div>
+              )}
+
+              {activeTab === 'profile' && (
+                <div className="text-center py-20 text-gray-500">
+                  <Sett
+                    isDarkTheme={isDarkTheme}
+                    setIsDarkTheme={setIsDarkTheme}
+                    userId={user?.uid}
+                  />
+                </div>
+              )}
+
+            </main>
+
+            <BottomNav activeTab={activeTab}
+              onTabChange={setActiveTab}
+              isDarkTheme={isDarkTheme} />
           </>
         )}
-
-        {/* Placeholder na przyszłe widoki */}
-        {activeTab === 'analytics' && (
-          <AnalyticsPage
-            isDarkTheme={isDarkTheme}
-          />
-        )}
-        {activeTab === 'calendar' && (
-          <div className="text-center py-20 text-gray-500">
-
-            <CalendarPage
-              onOpenTransactionInHistory={(transactionId) => {
-                setActiveTab('history');
-                setHistoryTargetTransactionId(null);
-                window.setTimeout(() => {
-                  setHistoryTargetTransactionId(transactionId);
-                }, 0);
-              }}
-              isDarkTheme={isDarkTheme}
-            />
-          </div>
-        )}
-
-        {activeTab === 'history' && (
-          <div className="text-center py-20 text-gray-500">
-            <h2 className="text-xl font-bold mb-2">Pełna Historia</h2>
-            <p>Lista wszystkich transakcji.</p>
-            <TransactionHistory
-              scrollToTransactionId={historyTargetTransactionId}
-              isDarkTheme={isDarkTheme}
-            />
-          </div>
-        )}
-
-        {activeTab === 'profile' && (
-          <div className="text-center py-20 text-gray-500">
-            <Sett
-              isDarkTheme={isDarkTheme}
-              setIsDarkTheme={setIsDarkTheme}
-              userId={user?.uid}
-            />
-          </div>
-        )}
-
-
-      </main>
-
-      <BottomNav activeTab={activeTab} 
-      onTabChange={setActiveTab}
-      isDarkTheme={isDarkTheme} />
-    </div>
+      </div>
+    </LanguageProvider>
   );
 }
 
