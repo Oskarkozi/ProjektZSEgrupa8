@@ -126,9 +126,60 @@ export default function TransactionHistory({ scrollToTransactionId = null, isDar
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const handleExportToCSV = () => {
+    if (filteredTransactions.length === 0) {
+      alert("Brak transakcji do wyeksportowania.");
+      return;
+    }
+
+    // Przygotuj nagłówki CSV
+    const headers = ["Data", "Typ", "Kategoria", "Kwota", "Opis"];
+    
+    // Przygotuj dane
+    const rows = filteredTransactions.map((transaction) => {
+      const categoryLabel = categories[transaction.type]?.[transaction.category]?.label || transaction.category;
+      return [
+        transaction.date || "",
+        transaction.type === "income" ? "Przychód" : "Wydatek",
+        categoryLabel,
+        transaction.amount || "",
+        transaction.description || ""
+      ];
+    });
+
+    // Utwórz zawartość CSV
+    const csvContent = [
+      headers.join(";"),
+      ...rows.map((row) => 
+        row.map((cell) => {
+          // Obsłuż wartości zawierające przecinki lub cudzysłowy
+          const cellString = String(cell);
+          if (cellString.includes(";") || cellString.includes('"') || cellString.includes("\n")) {
+            return `"${cellString.replace(/"/g, '""')}"`;
+          }
+          return cellString;
+        }).join(";")
+      )
+    ].join("\n");
+
+    // Utwórz blob i pobierz plik
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `transakcje_${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    
+    link.click();
+    
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="pb-8">
-      <div className="flex justify-between items-center mb-4 gap-4">
+      <div className="flex justify-between items-center mb-4 gap-4 flex-wrap">
         {/* Filtr po typie transakcji */}
         <div className="flex flex-col">
           <label className={`text-sm mb-2 ${isDarkTheme ? 'text-gray-400' : 'text-gray-700'}`}>Typ:</label>
@@ -183,6 +234,16 @@ export default function TransactionHistory({ scrollToTransactionId = null, isDar
               </>
             )}
           </select>
+        </div>
+
+        {/* Przycisk eksportu CSV */}
+        <div className="flex flex-col justify-end">
+          <button
+            onClick={handleExportToCSV}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${isDarkTheme ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-emerald-500 hover:bg-emerald-600 text-white'}`}
+          >
+            📥 Eksport CSV
+          </button>
         </div>
       </div>
 
