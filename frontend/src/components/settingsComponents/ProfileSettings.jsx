@@ -40,17 +40,17 @@ export const ProfileTab = ({ isDarkTheme = true }) => {
       console.log('ProfileSettings.handleSubmit: updateUserProfile completed');
       await updateProfile(user, { displayName: username });
 
-      // After username is saved, check if password was provided
+      // Po zapisaniu nazwy użytkownika sprawdź, czy podano hasło
       if (password) {
         try {
-          // Reauthenticate first (Firebase requirement)
+          // Ponowne uwierzytelnienie (wymóg Firebase)
           const currentPassword = prompt(t('enterCurrentPasswordPrompt'));
           if (!currentPassword) return; // user cancelled
 
           const cred = EmailAuthProvider.credential(user.email, currentPassword);
           await reauthenticateWithCredential(user, cred);
 
-          // Now update the password
+          // Teraz zaktualizuj hasło
           await updatePassword(user, password);
         } catch (err) {
           throw new Error('Password change failed: ' + err.message);

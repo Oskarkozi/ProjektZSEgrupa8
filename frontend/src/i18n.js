@@ -96,8 +96,10 @@ export const translations = {
         heroTitle: 'Przejmij kontrolę nad swoimi finansami.',
         heroText: 'Śledź wydatki, ustawiaj budżety i rozwijaj swoje oszczędności w jednym miejscu.',
         fullHistory: 'Pełna Historia',
-        historyList: 'Lista wszystkich transakcji.'
-        ,
+        historyList: 'Lista wszystkich transakcji.',
+        aboutApp: 'O aplikacji',
+        aboutAppText: 'Aplikacja stworzona do zarządzania wydatkami użytkownika.',
+        version: 'Wersja',
         exportCSV: 'Eksport CSV',
         // Profile / settings
         editProfile: 'Edytuj profil',
@@ -221,8 +223,10 @@ export const translations = {
         heroTitle: 'Take control of your finances.',
         heroText: 'Track spending, set budgets, and grow your wealth in one place.',
         fullHistory: 'Full History',
-        historyList: 'List of all transactions.'
-        ,
+        historyList: 'List of all transactions.',
+        aboutApp: 'About app',
+        aboutAppText: 'App created to manage users finances',
+        version: 'Version',
         exportCSV: 'Export CSV',
         // Profile / settings
         editProfile: 'Edit profile',

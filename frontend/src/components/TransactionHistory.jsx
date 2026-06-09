@@ -10,9 +10,9 @@ import TransactionItem from "./TransactionItem.jsx";
 import TransactionDetailsModal from "./TransactionDetailsModal.jsx";
 
 
-// Functions moved to services/transactionService.js
+// Funkcje przeniesione do services/transactionService.js
 
-// Components moved to their own files
+// Komponenty przeniesione do własnych plików
 
 
 // Widok pełnej historii transakcji z filtrami i paginacją.

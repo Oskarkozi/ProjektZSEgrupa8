@@ -229,12 +229,12 @@ export default function AnalyticsPage({ isDarkTheme = true }) {
 		const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0];
 		const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split('T')[0];
 
-		// Current month expenses (all categories)
+		// Wydatki bieżącego miesiąca (wszystkie kategorie)
 		const currentFiltered = transactions.filter(t => {
 			return t.date >= currentMonthStart && t.date <= currentMonthEnd && t.type === 'expense';
 		});
 
-		// Previous month expenses (all categories)
+		// Wydatki poprzedniego miesiąca (wszystkie kategorie)
 		const previousFiltered = transactions.filter(t => {
 			return t.date >= previousMonthStart && t.date <= previousMonthEnd && t.type === 'expense';
 		});

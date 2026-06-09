@@ -9,9 +9,6 @@ import TransactionItem from "./TransactionItem.jsx";
 import TransactionDetailsModal from "./TransactionDetailsModal.jsx";
 
 
-// Functions moved to services/transactionService.js
-
-// Components moved to their own files
 
 
 // Lista ostatnich transakcji z możliwością dodawania, edycji i podglądu szczegółów.
